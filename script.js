@@ -27,12 +27,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         'line-cap': 'round'
                     },
                     paint: {
+                        // Riso-inspired palette
                         'line-color': [
                             'match',
                             ['get', 'routetype'],
-                            'Local', '#1976d2',
-                            'Through', '#e67e22',
-                            /* other */ '#888'
+                            'Local', '#ff595e',      // Riso Red
+                            'Through', '#1982c4',   // Riso Blue
+                            /* other */ '#6a4c93'    // Riso Purple
                         ],
                         'line-width': 2.5,
                         'line-opacity': 0.85,
@@ -66,9 +67,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 names.forEach((name) => {
                     const key = name ? name.trim().toLowerCase() : '';
                     let color = '#ffe066';
-                    if (key === 'discretionary tax incentives') color = '#4caf50';
-                    else if (key === 'zoning incentives') color = '#8e44ad';
-                    else if (key === 'zoning and discretionary tax incentives') color = '#e74c3c';
+                    // Riso-inspired palette
+                    if (key === 'discretionary tax incentives') color = '#ffca3a'; // Riso Yellow
+                    else if (key === 'zoning incentives') color = '#8ac926';      // Riso Green
+                    else if (key === 'zoning and discretionary tax incentives') color = '#ff595e'; // Riso Red
                     matchExpr.push(key, color);
                 });
                 matchExpr.push('#ffe066');
@@ -87,18 +89,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 legend.className = 'map-legend';
                 legend.innerHTML = `
                     <div style="font-weight:700;font-size:1.08em;margin-bottom:10px;">City Support for New Grocery Stores</div>
-                    <div class="legend-row"><span class="legend-chip" style="background:#e74c3c"></span><span class="legend-label"><b>Strong City Support</b></span></div>
+                    <div class="legend-row"><span class="legend-chip" style="background:#ff595e"></span><span class="legend-label"><b>Strong City Support</b></span></div>
                     <div class="legend-desc">Zoning changes + tax incentives</div>
-                    <div class="legend-row"><span class="legend-chip" style="background:#8e44ad"></span><span class="legend-label"><b>Planning Support</b></span></div>
+                    <div class="legend-row"><span class="legend-chip" style="background:#8ac926"></span><span class="legend-label"><b>Planning Support</b></span></div>
                     <div class="legend-desc">Zoning flexibility only</div>
-                    <div class="legend-row"><span class="legend-chip" style="background:#4caf50"></span><span class="legend-label"><b>Financial Support</b></span></div>
+                    <div class="legend-row"><span class="legend-chip" style="background:#ffca3a"></span><span class="legend-label"><b>Financial Support</b></span></div>
                     <div class="legend-desc">Tax incentives only</div>
                     <div class="legend-note">📌 <b>Note:</b> These zones indicate where the City encourages supermarket development through planning and fiscal incentives.</div>
                     <hr style="margin:18px 0 10px 0;">
                     <div style="font-weight:700;font-size:1.08em;margin-bottom:10px;">Truck Routes</div>
-                    <div class="legend-row"><span class="legend-line legend-dashed" style="border-top:2.5px dashed #1976d2;"></span><span class="legend-label">Local (blue dashed)</span></div>
-                    <div class="legend-row"><span class="legend-line legend-dashed" style="border-top:2.5px dashed #e67e22;"></span><span class="legend-label">Through (orange dashed)</span></div>
-                    <div class="legend-row"><span class="legend-line legend-solid" style="border-top:2.5px solid #888;"></span><span class="legend-label">Other (gray solid)</span></div>
+                    <div class="legend-row"><span class="legend-line legend-dashed" style="border-top:2.5px dashed #ff595e;"></span><span class="legend-label">Local (riso red dashed)</span></div>
+                    <div class="legend-row"><span class="legend-line legend-dashed" style="border-top:2.5px dashed #1982c4;"></span><span class="legend-label">Through (riso blue dashed)</span></div>
+                    <div class="legend-row"><span class="legend-line legend-solid" style="border-top:2.5px solid #6a4c93;"></span><span class="legend-label">Other (riso purple solid)</span></div>
                 `;
                 const legendContainer = document.getElementById('dynamic-legends');
                 if (legendContainer) {
