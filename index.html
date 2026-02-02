@@ -17,31 +17,73 @@
                 <div id="sidebar-content">
                     <!-- Overview mode content (default) -->
                     <div id="overview-panel">
-                        <div class="dashboard-title">What does it take to feed a city?</div>
-                        <div class="tension-bar-section">
-                            <div class="tension-bar-labels">
-                                <span class="tension-label tension-label-left">Carbon Impact</span>
-                                <span class="tension-label tension-label-right">Inequality</span>
-                            </div>
-                            <div class="tension-bar-container">
-                                <div class="tension-bar-bg"></div>
-                                <input type="range" id="tension-slider" min="0" max="100" value="50">
-                                <div class="tension-bar-ticks">
-                                    <span></span><span></span><span></span><span></span><span></span>
-                                </div>
-                            </div>
-                            <div class="micro-legend">
-                                <span class="micro-chip" style="background:#e74c3c"></span><span class="micro-label">Carbon</span>
-                                <span class="micro-chip" style="background:#4caf50"></span><span class="micro-label">Inequality</span>
-                                <span class="micro-chip" style="background:#a67c52"></span><span class="micro-label">Combined</span>
+                        <div class="system-question-title">What does it take to feed a city?</div>
+                        <div class="system-tension-abstract">
+                            <span class="system-tension-label-left">Carbon Impact</span>
+                            <span class="system-tension-visual-axis">
+                                <span class="system-tension-tick"></span>
+                                <span class="system-tension-tick"></span>
+                                <span class="system-tension-tick"></span>
+                            </span>
+                            <span class="system-tension-label-right">Inequality</span>
+                        </div>
+                        <div class="system-view-mode">
+                            <span class="system-view-label">System View</span>
+                            <div class="system-view-selector refined-view">
+                                <button class="system-view-btn refined-btn active" id="toggle-combined">Combined</button>
+                                <button class="system-view-btn refined-btn" id="toggle-carbon">Carbon</button>
+                                <button class="system-view-btn refined-btn" id="toggle-inequality">Inequality</button>
                             </div>
                         </div>
-                        <div class="toggle-cluster">
-                            <button class="toggle-btn active" id="toggle-combined">Combined</button>
-                            <button class="toggle-btn" id="toggle-carbon">Carbon</button>
-                            <button class="toggle-btn" id="toggle-inequality">Inequality</button>
+                        <div class="panel-secondary-info minimal-policy refined-policy">
+                            <div class="panel-secondary-title refined-policy-title">City Support for New Grocery Stores</div>
+                            <ul class="refined-policy-list">
+                                <li><span class="refined-dot refined-dot-strong"></span><span class="refined-policy-label">Strong Support</span><br><span class="refined-policy-desc">Zoning + tax incentives</span></li>
+                                <li><span class="refined-dot refined-dot-plan"></span><span class="refined-policy-label">Planning Support</span><br><span class="refined-policy-desc">Zoning flexibility only</span></li>
+                                <li><span class="refined-dot refined-dot-fin"></span><span class="refined-policy-label">Financial Support</span><br><span class="refined-policy-desc">Tax incentives only</span></li>
+                            </ul>
                         </div>
-                        <div class="legend" id="dynamic-legends"></div>
+                        <div class="panel-map-legend legend-tabs">
+                            <div class="legend-tab-header">
+                                <button class="legend-tab-btn active" id="legend-tab-truck">Truck Routes</button>
+                                <button class="legend-tab-btn" id="legend-tab-zoning">Zoning</button>
+                            </div>
+                            <div class="legend-tab-content" id="legend-content-truck">
+                                <div class="panel-legend-title">Truck Routes</div>
+                                <div class="panel-legend-row"><span class="panel-legend-line panel-legend-dashed" style="border-top:2.5px dashed #1976d2;"></span><span class="panel-legend-label">Local (blue dashed)</span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-line panel-legend-dashed" style="border-top:2.5px dashed #e67e22;"></span><span class="panel-legend-label">Through (orange dashed)</span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-line panel-legend-solid" style="border-top:2.5px solid #888;"></span><span class="panel-legend-label">Other (gray solid)</span></div>
+                            </div>
+                            <div class="legend-tab-content" id="legend-content-zoning" style="display:none;">
+                                <div class="panel-legend-title">Zoning Incentives</div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#e74c3c;"></span><span class="panel-legend-label">Strong City Support<br><span class="panel-legend-desc">Zoning + tax incentives</span></span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#8e44ad;"></span><span class="panel-legend-label">Planning Support<br><span class="panel-legend-desc">Zoning flexibility only</span></span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#4caf50;"></span><span class="panel-legend-label">Financial Support<br><span class="panel-legend-desc">Tax incentives only</span></span></div>
+                            </div>
+                        </div>
+                            <script>
+                            // Legend tab switching logic
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const tabTruck = document.getElementById('legend-tab-truck');
+                                const tabZoning = document.getElementById('legend-tab-zoning');
+                                const contentTruck = document.getElementById('legend-content-truck');
+                                const contentZoning = document.getElementById('legend-content-zoning');
+                                if(tabTruck && tabZoning && contentTruck && contentZoning) {
+                                    tabTruck.addEventListener('click', function() {
+                                        tabTruck.classList.add('active');
+                                        tabZoning.classList.remove('active');
+                                        contentTruck.style.display = '';
+                                        contentZoning.style.display = 'none';
+                                    });
+                                    tabZoning.addEventListener('click', function() {
+                                        tabZoning.classList.add('active');
+                                        tabTruck.classList.remove('active');
+                                        contentZoning.style.display = '';
+                                        contentTruck.style.display = 'none';
+                                    });
+                                }
+                            });
+                            </script>
                     </div>
                     <!-- Probe mode content (hidden by default) -->
                     <div id="probe-panel" style="display:none;">

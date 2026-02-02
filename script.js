@@ -96,9 +96,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="legend-note">📌 <b>Note:</b> These zones indicate where the City encourages supermarket development through planning and fiscal incentives.</div>
                     <hr style="margin:18px 0 10px 0;">
                     <div style="font-weight:700;font-size:1.08em;margin-bottom:10px;">Truck Routes</div>
-                    <div class="legend-row"><span class="legend-line legend-dashed" style="border-top:2.5px dashed #1976d2;"></span><span class="legend-label">Local (蓝色虚线)</span></div>
-                    <div class="legend-row"><span class="legend-line legend-dashed" style="border-top:2.5px dashed #e67e22;"></span><span class="legend-label">Through (橙色虚线)</span></div>
-                    <div class="legend-row"><span class="legend-line legend-solid" style="border-top:2.5px solid #888;"></span><span class="legend-label">Other (灰色实线)</span></div>
+                    <div class="legend-row"><span class="legend-line legend-dashed" style="border-top:2.5px dashed #1976d2;"></span><span class="legend-label">Local (blue dashed)</span></div>
+                    <div class="legend-row"><span class="legend-line legend-dashed" style="border-top:2.5px dashed #e67e22;"></span><span class="legend-label">Through (orange dashed)</span></div>
+                    <div class="legend-row"><span class="legend-line legend-solid" style="border-top:2.5px solid #888;"></span><span class="legend-label">Other (gray solid)</span></div>
                 `;
                 const legendContainer = document.getElementById('dynamic-legends');
                 if (legendContainer) {
