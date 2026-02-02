@@ -57,19 +57,20 @@ map.on('load', () => {
                                 // Add legend to sidebar legend tab
                                 const legend = document.createElement('div');
                                 legend.className = 'map-legend';
-                                legend.innerHTML = `
-                                    <strong>City Support for New Grocery Stores</strong><br><br>
-                                    <span style="display:inline-block;width:16px;height:16px;background:#e74c3c;margin-right:8px;border-radius:3px;"></span>
-                                    <b>Strong City Support</b><br>
-                                    <span style="color:#888;font-size:0.97em;">Zoning changes + tax incentives</span><br><br>
-                                    <span style="display:inline-block;width:16px;height:16px;background:#8e44ad;margin-right:8px;border-radius:3px;"></span>
-                                    <b>Planning Support</b><br>
-                                    <span style="color:#888;font-size:0.97em;">Zoning flexibility only</span><br><br>
-                                    <span style="display:inline-block;width:16px;height:16px;background:#4caf50;margin-right:8px;border-radius:3px;"></span>
-                                    <b>Financial Support</b><br>
-                                    <span style="color:#888;font-size:0.97em;">Tax incentives only</span><br><br>
-                                    <span style="font-size:0.97em;">📌 <b>Note:</b> These zones indicate where the City encourages supermarket development through planning and fiscal incentives.</span>
-                                `;
+                                                                legend.innerHTML = `
+                                                                    <div style="font-weight:700;font-size:1.08em;margin-bottom:10px;">City Support for New Grocery Stores</div>
+                                                                    <div class="legend-row"><span class="legend-chip" style="background:#e74c3c"></span><span class="legend-label"><b>Strong City Support</b></span></div>
+                                                                    <div class="legend-desc">Zoning changes + tax incentives</div>
+                                                                    <div class="legend-row"><span class="legend-chip" style="background:#8e44ad"></span><span class="legend-label"><b>Planning Support</b></span></div>
+                                                                    <div class="legend-desc">Zoning flexibility only</div>
+                                                                    <div class="legend-row"><span class="legend-chip" style="background:#4caf50"></span><span class="legend-label"><b>Financial Support</b></span></div>
+                                                                    <div class="legend-desc">Tax incentives only</div>
+                                                                    <div class="legend-note">📌 <b>Note:</b> These zones indicate where the City encourages supermarket development through planning and fiscal incentives.</div>
+                                                                    <hr style="margin:18px 0 10px 0;">
+                                                                    <div style="font-weight:700;font-size:1.08em;margin-bottom:10px;">Truck Routes</div>
+                                                                    <div class="legend-row"><span class="legend-line legend-dashed"></span><span class="legend-label">Truck Route (dashed)</span></div>
+                                                                    <div class="legend-row"><span class="legend-line legend-solid"></span><span class="legend-label">Non-Truck Route (solid)</span></div>
+                                                                `;
                                 const legendContainer = document.getElementById('dynamic-legends');
                                 if (legendContainer) {
                                     legendContainer.innerHTML = '';

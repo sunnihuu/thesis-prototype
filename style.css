@@ -1,3 +1,209 @@
+.legend {
+	max-height: 320px;
+	overflow-y: auto;
+	padding-right: 4px;
+}
+.legend-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 2px;
+}
+.legend-chip {
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	display: inline-block;
+	margin-right: 4px;
+	vertical-align: middle;
+	border: 1.5px solid #e0e0e0;
+}
+.legend-label {
+	font-size: 1em;
+	color: #444;
+	font-weight: 500;
+}
+.legend-desc {
+	font-size: 0.97em;
+	color: #888;
+	margin-left: 26px;
+	margin-bottom: 8px;
+}
+.legend-note {
+	font-size: 0.97em;
+	color: #888;
+	margin: 10px 0 0 0;
+}
+.legend-line {
+	display: inline-block;
+	width: 32px;
+	height: 0;
+	margin-right: 8px;
+	vertical-align: middle;
+}
+.legend-dashed {
+	border-top: 3px dashed #1a73e8;
+}
+.legend-solid {
+	border-top: 3px solid #1a73e8;
+}
+.dashboard-title {
+	font-size: 2.1em;
+	font-weight: 700;
+	margin-bottom: 36px;
+	margin-top: 0;
+	letter-spacing: -0.5px;
+	color: #232323;
+	line-height: 1.1;
+}
+.tension-bar-section {
+	margin-bottom: 32px;
+}
+.tension-bar-labels {
+	display: flex;
+	justify-content: space-between;
+	font-size: 1.08em;
+	font-weight: 500;
+	margin-bottom: 8px;
+	color: #555;
+}
+.tension-label-left { color: #e74c3c; }
+.tension-label-right { color: #4caf50; }
+.tension-bar-container {
+	position: relative;
+	height: 36px;
+	margin-bottom: 10px;
+}
+.tension-bar-bg {
+	position: absolute;
+	left: 0; right: 0; top: 50%;
+	height: 6px;
+	background: linear-gradient(90deg, #ffe5e0 0%, #e0e0e0 50%, #e0f5e0 100%);
+	border-radius: 3px;
+	transform: translateY(-50%);
+	z-index: 1;
+}
+#tension-slider {
+	position: absolute;
+	left: 0; right: 0; top: 50%;
+	width: 100%;
+	z-index: 2;
+	background: none;
+	height: 36px;
+	margin: 0;
+	-webkit-appearance: none;
+	appearance: none;
+}
+#tension-slider::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 22px;
+	height: 22px;
+	border-radius: 50%;
+	background: #fff;
+	border: 2.5px solid #a67c52;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+	cursor: pointer;
+	transition: border 0.2s;
+}
+#tension-slider:focus::-webkit-slider-thumb {
+	border: 2.5px solid #e74c3c;
+}
+#tension-slider::-moz-range-thumb {
+	width: 22px;
+	height: 22px;
+	border-radius: 50%;
+	background: #fff;
+	border: 2.5px solid #a67c52;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+	cursor: pointer;
+	transition: border 0.2s;
+}
+#tension-slider:focus::-moz-range-thumb {
+	border: 2.5px solid #e74c3c;
+}
+#tension-slider::-ms-thumb {
+	width: 22px;
+	height: 22px;
+	border-radius: 50%;
+	background: #fff;
+	border: 2.5px solid #a67c52;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+	cursor: pointer;
+	transition: border 0.2s;
+}
+#tension-slider:focus::-ms-thumb {
+	border: 2.5px solid #e74c3c;
+}
+#tension-slider::-webkit-slider-runnable-track {
+	height: 6px;
+	background: transparent;
+	border-radius: 3px;
+}
+#tension-slider::-ms-fill-lower, #tension-slider::-ms-fill-upper {
+	background: transparent;
+}
+.tension-bar-ticks {
+	position: absolute;
+	left: 0; right: 0; top: 50%;
+	height: 6px;
+	display: flex;
+	justify-content: space-between;
+	z-index: 3;
+	pointer-events: none;
+}
+.tension-bar-ticks span {
+	width: 2px;
+	height: 14px;
+	background: #bdbdbd;
+	display: block;
+	border-radius: 1px;
+	margin-top: -4px;
+}
+.micro-legend {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-top: 10px;
+	margin-bottom: 18px;
+}
+.micro-chip {
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	display: inline-block;
+	margin-right: 4px;
+	vertical-align: middle;
+}
+.micro-label {
+	font-size: 1em;
+	color: #555;
+	margin-right: 10px;
+	font-weight: 500;
+}
+.toggle-cluster {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 18px;
+}
+.toggle-btn {
+	flex: 1;
+	background: #f5f6fa;
+	border: 1px solid #e0e0e0;
+	border-radius: 6px;
+	padding: 7px 0;
+	font-size: 1em;
+	cursor: pointer;
+	color: #444;
+	outline: none;
+	transition: background 0.2s, color 0.2s;
+}
+.toggle-btn.active {
+	background: #fff;
+	color: #222;
+	border: 1.5px solid #a67c52;
+	font-weight: 600;
+}
 .sidebar-tabs {
 	display: flex;
 	gap: 8px;

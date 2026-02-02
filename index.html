@@ -13,31 +13,37 @@
 <body>
         <div class="urban-system-container">
             <aside class="sidebar">
-                <h2>What does it take to feed a city?</h2>
-                <p class="intro">This interface visualizes how food-related carbon processes and inequality interact across New York City.</p>
-                <div class="sidebar-tabs">
-                    <button class="tab-btn active" id="tab-explore">Explore Layers</button>
-                    <button class="tab-btn" id="tab-legend">Legend</button>
-                </div>
-                <div id="tab-content-explore" class="tab-content" style="display:block;">
-                    <div class="slider-section">
-                        <label for="tension-slider"><strong>Carbon–Inequality Tension</strong></label>
+                <div class="dashboard-title">What does it take to feed a city?</div>
+                <div class="tension-bar-section">
+                    <div class="tension-bar-labels">
+                        <span class="tension-label tension-label-left">Carbon Impact</span>
+                        <span class="tension-label tension-label-right">Inequality</span>
+                    </div>
+                    <div class="tension-bar-container">
+                        <div class="tension-bar-bg"></div>
                         <input type="range" id="tension-slider" min="0" max="100" value="50">
-                        <div class="slider-labels">
-                            <span>Carbon Processes</span>
-                            <span>Inequality</span>
+                        <div class="tension-bar-ticks">
+                            <span></span><span></span><span></span><span></span><span></span>
                         </div>
-                        <p class="slider-explanation">Move the slider to explore how system drivers shift vulnerability across the city.</p>
+                    </div>
+                    <div class="micro-legend">
+                        <span class="micro-chip" style="background:#e74c3c"></span><span class="micro-label">Carbon</span>
+                        <span class="micro-chip" style="background:#4caf50"></span><span class="micro-label">Inequality</span>
+                        <span class="micro-chip" style="background:#a67c52"></span><span class="micro-label">Combined</span>
                     </div>
                 </div>
+                <div class="toggle-cluster">
+                    <button class="toggle-btn active" id="toggle-combined">Combined</button>
+                    <button class="toggle-btn" id="toggle-carbon">Carbon</button>
+                    <button class="toggle-btn" id="toggle-inequality">Inequality</button>
+                </div>
+                <div class="sidebar-tabs">
+                    <button class="tab-btn active" id="tab-explore">Explore</button>
+                    <button class="tab-btn" id="tab-legend">Legend</button>
+                </div>
+                <div id="tab-content-explore" class="tab-content" style="display:block;"></div>
                 <div id="tab-content-legend" class="tab-content" style="display:none;">
                     <div class="legend">
-                        <h4>Relative Vulnerability</h4>
-                        <div class="legend-bar"></div>
-                        <div class="legend-labels">
-                            <span>Low</span>
-                            <span>High</span>
-                        </div>
                         <div id="dynamic-legends"></div>
                     </div>
                 </div>
@@ -67,6 +73,18 @@
                     contentLegend.style.display = 'block';
                     contentExplore.style.display = 'none';
                 });
+
+                // Toggle cluster logic
+                const toggles = [
+                    document.getElementById('toggle-combined'),
+                    document.getElementById('toggle-carbon'),
+                    document.getElementById('toggle-inequality')
+                ];
+                toggles.forEach(btn => btn.addEventListener('click', function() {
+                    toggles.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    // TODO: Add logic to update map mode
+                }));
             });
         </script>
         <script src="script.js"></script>
