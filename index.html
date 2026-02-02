@@ -47,19 +47,16 @@
                                     <span class="panel-legend-color" style="background:#1976d2;"></span>
                                     <span class="panel-legend-line panel-legend-dashed" style="border-top:2.5px dashed #1976d2;"></span>
                                     <span class="panel-legend-label">Local</span>
-                                    <span class="panel-legend-attr">blue, dashed</span>
                                 </div>
                                 <div class="panel-legend-row">
                                     <span class="panel-legend-color" style="background:#e67e22;"></span>
                                     <span class="panel-legend-line panel-legend-dashed" style="border-top:2.5px dashed #e67e22;"></span>
                                     <span class="panel-legend-label">Through</span>
-                                    <span class="panel-legend-attr">orange, dashed</span>
                                 </div>
                                 <div class="panel-legend-row">
                                     <span class="panel-legend-color" style="background:#888;"></span>
                                     <span class="panel-legend-line panel-legend-solid" style="border-top:2.5px solid #888;"></span>
                                     <span class="panel-legend-label">Other</span>
-                                    <span class="panel-legend-attr">gray, solid</span>
                                 </div>
                             </div>
                             <div class="legend-tab-content" id="legend-content-zoning" style="display:none;">
@@ -104,48 +101,67 @@
                         <div class="probe-message" id="probe-message" style="display:none;">Move the lens to read the city</div>
                     </div>
                 </div>
-            </aside>
-
-                <main class="map-panel">
-                        <div id="map"></div>
-                        <div id="tooltip" class="tooltip" style="display:none;"></div>
-                </main>
-        </div>
-
-        <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-        <script>
-            // Tab switching logic
-            document.addEventListener('DOMContentLoaded', function() {
-                const tabExplore = document.getElementById('tab-explore');
-                const tabLegend = document.getElementById('tab-legend');
-                const contentExplore = document.getElementById('tab-content-explore');
-                const contentLegend = document.getElementById('tab-content-legend');
-                tabExplore.addEventListener('click', function() {
-                    tabExplore.classList.add('active');
-                    tabLegend.classList.remove('active');
-                    contentExplore.style.display = 'block';
-                    contentLegend.style.display = 'none';
-                });
-                tabLegend.addEventListener('click', function() {
-                    tabLegend.classList.add('active');
-                    tabExplore.classList.remove('active');
-                    contentLegend.style.display = 'block';
-                    contentExplore.style.display = 'none';
-                });
-
-                // Toggle cluster logic
-                const toggles = [
-                    document.getElementById('toggle-combined'),
-                    document.getElementById('toggle-carbon'),
-                    document.getElementById('toggle-inequality')
-                ];
-                toggles.forEach(btn => btn.addEventListener('click', function() {
-                    toggles.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    // TODO: Add logic to update map mode
-                }));
-            });
-        </script>
-        <script src="script.js"></script>
-</body>
-</html>
+            <div class="left-panel">
+                <div class="panel-section">
+                    <div class="system-question-title">What does it take to feed a city?</div>
+                    <div class="system-question-sub">A systems lens on urban food, logistics, and equity.</div>
+                </div>
+                <div class="panel-section">
+                    <div class="system-tension-abstract">
+                        <div class="system-tension-axis">
+                            <span class="system-tension-axis-label left">Carbon</span>
+                            <div class="system-tension-bar">
+                                <div class="system-tension-bar-bg"></div>
+                                <div class="system-tension-bar-knob"></div>
+                            </div>
+                            <span class="system-tension-axis-label right">Inequality</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-section">
+                    <div class="system-view-mode">
+                        <button class="system-view-btn active">Combined</button>
+                        <button class="system-view-btn">Carbon</button>
+                        <button class="system-view-btn">Inequality</button>
+                    </div>
+                </div>
+                <div class="panel-section">
+                    <div class="legend-tabs">
+                        <div class="legend-tab-header">
+                            <div class="legend-tab-btn active" data-tab="truck">Truck Routes</div>
+                            <div class="legend-tab-btn" data-tab="zoning">Zoning</div>
+                        </div>
+                        <div class="legend-tab-content" id="legend-tab-truck">
+                            <div class="panel-legend-row">
+                                <span class="panel-legend-color panel-legend-color-local"></span>
+                                <span class="panel-legend-line panel-legend-line-dashed"></span>
+                                <span class="panel-legend-label">Local</span>
+                            </div>
+                            <div class="panel-legend-row">
+                                <span class="panel-legend-color panel-legend-color-through"></span>
+                                <span class="panel-legend-line panel-legend-line-dashed"></span>
+                                <span class="panel-legend-label">Through</span>
+                            </div>
+                            <div class="panel-legend-row">
+                                <span class="panel-legend-color panel-legend-color-other"></span>
+                                <span class="panel-legend-line panel-legend-line-solid"></span>
+                                <span class="panel-legend-label">Other</span>
+                            </div>
+                        </div>
+                        <div class="legend-tab-content" id="legend-tab-zoning" style="display:none;">
+                            <div class="panel-legend-row">
+                                <span class="panel-legend-color panel-legend-color-m1"></span>
+                                <span class="panel-legend-label">M1</span>
+                            </div>
+                            <div class="panel-legend-row">
+                                <span class="panel-legend-color panel-legend-color-m2"></span>
+                                <span class="panel-legend-label">M2</span>
+                            </div>
+                            <div class="panel-legend-row">
+                                <span class="panel-legend-color panel-legend-color-m3"></span>
+                                <span class="panel-legend-label">M3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
