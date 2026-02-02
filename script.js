@@ -1,11 +1,34 @@
+
 // Mapbox access token provided by user
 mapboxgl.accessToken = 'pk.eyJ1Ijoic3VubmlodSIsImEiOiJjbWQ2bDBwNzcwMThwMm9weTVjc2JuNG90In0.sVXA1xGrFWnG-1ZV_EyO1w';
 
 const map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/light-v11',
+    style: 'mapbox://styles/mapbox/light-v10', // Use Mapbox's light gray style
     center: [-73.935242, 40.730610],
     zoom: 10.5
+});
+
+// Add NYC truck routes GeoJSON as a layer after map loads
+map.on('load', () => {
+    map.addSource('nyc-truck-routes', {
+        type: 'geojson',
+        data: 'data/nyc-truck-routes-2026.geojson'
+    });
+    map.addLayer({
+        id: 'nyc-truck-routes',
+        type: 'line',
+        source: 'nyc-truck-routes',
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        paint: {
+            'line-color': '#1a73e8',
+            'line-width': 2.5,
+            'line-opacity': 0.85
+        }
+    });
 });
 
 // Fit to bounds covering all NYC boroughs (approximate SW and NE corners)
