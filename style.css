@@ -1,3 +1,13 @@
+/* Ensure the map is visible and fills the space next to the sidebar */
+#map {
+	flex: 1;
+	min-width: 0;
+	height: 100vh;
+	border: none;
+	box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+	background: #f5f6fa;
+	z-index: 1;
+}
 .panel-legend-color {
 	display: inline-block;
 	width: 16px;
@@ -382,7 +392,9 @@
 	}
 	/* System View Mode */
 	.system-view-mode {
-		margin-bottom: 28px;
+		margin-bottom: 0;
+		display: flex;
+		gap: 12px;
 	}
 	.system-view-label {
 		font-size: 1.02em;
@@ -400,11 +412,13 @@
 		border: 1.5px solid #bbb;
 		color: #444;
 		border-radius: 18px;
-		padding: 6px 18px;
-		font-size: 1em;
+		padding: 3px 12px;
+		font-size: 0.97em;
 		font-weight: 600;
 		cursor: pointer;
 		transition: background 0.2s, color 0.2s;
+		height: 26px;
+		margin: 0;
 	}
 	.system-view-btn.active {
 		background: #222;

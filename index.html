@@ -90,78 +90,11 @@
                             });
                             </script>
                     </div>
-                    <!-- Probe mode content (hidden by default) -->
-                    <div id="probe-panel" style="display:none;">
-                        <div class="probe-title">Location Probe</div>
-                        <div class="probe-metrics">
-                            <div class="probe-row"><span>Carbon Index</span><span id="probe-carbon">0.71</span></div>
-                            <div class="probe-row"><span>Inequality Index</span><span id="probe-inequality">0.83</span></div>
-                            <div class="probe-row"><span>Combined Pressure</span><span id="probe-combined">High</span></div>
-                        </div>
-                        <div class="probe-message" id="probe-message" style="display:none;">Move the lens to read the city</div>
-                    </div>
-                </div>
-            <div class="left-panel">
-                <div class="panel-section">
-                    <div class="system-question-title">What does it take to feed a city?</div>
-                    <div class="system-question-sub">A systems lens on urban food, logistics, and equity.</div>
-                </div>
-                <div class="panel-section">
-                    <div class="system-tension-abstract">
-                        <div class="system-tension-axis">
-                            <span class="system-tension-axis-label left">Carbon</span>
-                            <div class="system-tension-bar">
-                                <div class="system-tension-bar-bg"></div>
-                                <div class="system-tension-bar-knob"></div>
-                            </div>
-                            <span class="system-tension-axis-label right">Inequality</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-section">
-                    <div class="system-view-mode">
-                        <button class="system-view-btn active">Combined</button>
-                        <button class="system-view-btn">Carbon</button>
-                        <button class="system-view-btn">Inequality</button>
-                    </div>
-                </div>
-                <div class="panel-section">
-                    <div class="legend-tabs">
-                        <div class="legend-tab-header">
-                            <div class="legend-tab-btn active" data-tab="truck">Truck Routes</div>
-                            <div class="legend-tab-btn" data-tab="zoning">Zoning</div>
-                        </div>
-                        <div class="legend-tab-content" id="legend-tab-truck">
-                            <div class="panel-legend-row">
-                                <span class="panel-legend-color panel-legend-color-local"></span>
-                                <span class="panel-legend-line panel-legend-line-dashed"></span>
-                                <span class="panel-legend-label">Local</span>
-                            </div>
-                            <div class="panel-legend-row">
-                                <span class="panel-legend-color panel-legend-color-through"></span>
-                                <span class="panel-legend-line panel-legend-line-dashed"></span>
-                                <span class="panel-legend-label">Through</span>
-                            </div>
-                            <div class="panel-legend-row">
-                                <span class="panel-legend-color panel-legend-color-other"></span>
-                                <span class="panel-legend-line panel-legend-line-solid"></span>
-                                <span class="panel-legend-label">Other</span>
-                            </div>
-                        </div>
-                        <div class="legend-tab-content" id="legend-tab-zoning" style="display:none;">
-                            <div class="panel-legend-row">
-                                <span class="panel-legend-color panel-legend-color-m1"></span>
-                                <span class="panel-legend-label">M1</span>
-                            </div>
-                            <div class="panel-legend-row">
-                                <span class="panel-legend-color panel-legend-color-m2"></span>
-                                <span class="panel-legend-label">M2</span>
-                            </div>
-                            <div class="panel-legend-row">
-                                <span class="panel-legend-color panel-legend-color-m3"></span>
-                                <span class="panel-legend-label">M3</span>
-                            </div>
-                        </div>
-                    </div>
+            
                 </div>
             </div>
+            <div id="map"></div>
+            <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+            <script src="script.js"></script>
+</body>
+</html>
