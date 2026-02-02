@@ -1,9 +1,44 @@
+.sidebar-tabs {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 18px;
+}
+.tab-btn {
+	flex: 1;
+	background: #f5f6fa;
+	border: 1px solid #e0e0e0;
+	border-radius: 6px 6px 0 0;
+	padding: 8px 0;
+	font-size: 1em;
+	cursor: pointer;
+	color: #444;
+	outline: none;
+	transition: background 0.2s, color 0.2s;
+}
+.tab-btn.active {
+	background: #fff;
+	color: #222;
+	border-bottom: 1px solid #fff;
+	font-weight: 600;
+}
+.tab-content {
+	min-height: 120px;
+}
+.legend {
+	margin-top: 12px;
+}
+.map-legend {
+	margin-top: 18px;
+}
 body, html {
 	height: 100%;
 	margin: 0;
 	padding: 0;
 	background: #f5f6fa;
-	font-family: 'Inter', Arial, sans-serif;
+	font-family: 'Onest', Arial, sans-serif;
+	font-optical-sizing: auto;
+	font-weight: 400;
+	font-style: normal;
 }
 
 .urban-system-container {
@@ -21,6 +56,8 @@ body, html {
 	flex-direction: column;
 	gap: 32px;
 	z-index: 2;
+	height: 100vh;
+	overflow-y: auto;
 }
 
 .sidebar h2 {
