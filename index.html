@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indices Prototype Map</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+        <div class="urban-system-container">
+            <aside class="sidebar">
+                <h2>What does it take to feed a city?</h2>
+                <p class="intro">This interface visualizes how food-related carbon processes and inequality interact across New York City.</p>
+                <div class="slider-section">
+                    <label for="tension-slider"><strong>Carbon–Inequality Tension</strong></label>
+                    <input type="range" id="tension-slider" min="0" max="100" value="50">
+                    <div class="slider-labels">
+                        <span>Carbon Processes</span>
+                        <span>Inequality</span>
+                    </div>
+                    <p class="slider-explanation">Move the slider to explore how system drivers shift vulnerability across the city.</p>
+                </div>
+                <div class="legend">
+                    <h4>Relative Vulnerability</h4>
+                    <div class="legend-bar"></div>
+                    <div class="legend-labels">
+                        <span>Low</span>
+                        <span>High</span>
+                    </div>
+                </div>
+            </aside>
+            <main class="map-panel">
+                <div id="map"></div>
+                <div id="tooltip" class="tooltip" style="display:none;"></div>
+            </main>
+        </div>
+        <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+        <script src="script.js"></script>
+</body>
+</html>
