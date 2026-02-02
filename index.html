@@ -17,7 +17,8 @@
                 <div id="sidebar-content">
                     <!-- Overview mode content (default) -->
                     <div id="overview-panel">
-                        <div class="system-question-title">What does it take to feed a city?</div>
+                        <h1 class="system-question-title">What does it take to feed a city?</h1>
+                        <div class="system-question-sub">A systems lens on urban food, logistics, and equity.</div>
                         <div class="system-tension-abstract">
                             <span class="system-tension-label-left">Carbon Impact</span>
                             <span class="system-tension-visual-axis">
@@ -35,14 +36,6 @@
                                 <button class="system-view-btn refined-btn" id="toggle-inequality">Inequality</button>
                             </div>
                         </div>
-                        <div class="panel-secondary-info minimal-policy refined-policy">
-                            <div class="panel-secondary-title refined-policy-title">City Support for New Grocery Stores</div>
-                            <ul class="refined-policy-list">
-                                <li><span class="refined-dot refined-dot-strong"></span><span class="refined-policy-label">Strong Support</span><br><span class="refined-policy-desc">Zoning + tax incentives</span></li>
-                                <li><span class="refined-dot refined-dot-plan"></span><span class="refined-policy-label">Planning Support</span><br><span class="refined-policy-desc">Zoning flexibility only</span></li>
-                                <li><span class="refined-dot refined-dot-fin"></span><span class="refined-policy-label">Financial Support</span><br><span class="refined-policy-desc">Tax incentives only</span></li>
-                            </ul>
-                        </div>
                         <div class="panel-map-legend legend-tabs">
                             <div class="legend-tab-header">
                                 <button class="legend-tab-btn active" id="legend-tab-truck">Truck Routes</button>
@@ -50,9 +43,24 @@
                             </div>
                             <div class="legend-tab-content" id="legend-content-truck">
                                 <div class="panel-legend-title">Truck Routes</div>
-                                <div class="panel-legend-row"><span class="panel-legend-line panel-legend-dashed" style="border-top:2.5px dashed #1976d2;"></span><span class="panel-legend-label">Local (blue dashed)</span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-line panel-legend-dashed" style="border-top:2.5px dashed #e67e22;"></span><span class="panel-legend-label">Through (orange dashed)</span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-line panel-legend-solid" style="border-top:2.5px solid #888;"></span><span class="panel-legend-label">Other (gray solid)</span></div>
+                                <div class="panel-legend-row">
+                                    <span class="panel-legend-color" style="background:#1976d2;"></span>
+                                    <span class="panel-legend-line panel-legend-dashed" style="border-top:2.5px dashed #1976d2;"></span>
+                                    <span class="panel-legend-label">Local</span>
+                                    <span class="panel-legend-attr">blue, dashed</span>
+                                </div>
+                                <div class="panel-legend-row">
+                                    <span class="panel-legend-color" style="background:#e67e22;"></span>
+                                    <span class="panel-legend-line panel-legend-dashed" style="border-top:2.5px dashed #e67e22;"></span>
+                                    <span class="panel-legend-label">Through</span>
+                                    <span class="panel-legend-attr">orange, dashed</span>
+                                </div>
+                                <div class="panel-legend-row">
+                                    <span class="panel-legend-color" style="background:#888;"></span>
+                                    <span class="panel-legend-line panel-legend-solid" style="border-top:2.5px solid #888;"></span>
+                                    <span class="panel-legend-label">Other</span>
+                                    <span class="panel-legend-attr">gray, solid</span>
+                                </div>
                             </div>
                             <div class="legend-tab-content" id="legend-content-zoning" style="display:none;">
                                 <div class="panel-legend-title">Zoning Incentives</div>
