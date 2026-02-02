@@ -13,46 +13,58 @@
 <body>
         <div class="urban-system-container">
             <aside class="sidebar">
-                <div class="dashboard-title">What does it take to feed a city?</div>
-                <div class="tension-bar-section">
-                    <div class="tension-bar-labels">
-                        <span class="tension-label tension-label-left">Carbon Impact</span>
-                        <span class="tension-label tension-label-right">Inequality</span>
-                    </div>
-                    <div class="tension-bar-container">
-                        <div class="tension-bar-bg"></div>
-                        <input type="range" id="tension-slider" min="0" max="100" value="50">
-                        <div class="tension-bar-ticks">
-                            <span></span><span></span><span></span><span></span><span></span>
+                <div class="mode-toggle">
+                    <button class="mode-btn active" id="mode-overview">Overview</button>
+                    <button class="mode-btn" id="mode-probe">Probe</button>
+                </div>
+                <div id="sidebar-content">
+                    <!-- Overview mode content (default) -->
+                    <div id="overview-panel">
+                        <div class="dashboard-title">What does it take to feed a city?</div>
+                        <div class="tension-bar-section">
+                            <div class="tension-bar-labels">
+                                <span class="tension-label tension-label-left">Carbon Impact</span>
+                                <span class="tension-label tension-label-right">Inequality</span>
+                            </div>
+                            <div class="tension-bar-container">
+                                <div class="tension-bar-bg"></div>
+                                <input type="range" id="tension-slider" min="0" max="100" value="50">
+                                <div class="tension-bar-ticks">
+                                    <span></span><span></span><span></span><span></span><span></span>
+                                </div>
+                            </div>
+                            <div class="micro-legend">
+                                <span class="micro-chip" style="background:#e74c3c"></span><span class="micro-label">Carbon</span>
+                                <span class="micro-chip" style="background:#4caf50"></span><span class="micro-label">Inequality</span>
+                                <span class="micro-chip" style="background:#a67c52"></span><span class="micro-label">Combined</span>
+                            </div>
                         </div>
+                        <div class="toggle-cluster">
+                            <button class="toggle-btn active" id="toggle-combined">Combined</button>
+                            <button class="toggle-btn" id="toggle-carbon">Carbon</button>
+                            <button class="toggle-btn" id="toggle-inequality">Inequality</button>
+                        </div>
+                        <div class="legend" id="dynamic-legends"></div>
                     </div>
-                    <div class="micro-legend">
-                        <span class="micro-chip" style="background:#e74c3c"></span><span class="micro-label">Carbon</span>
-                        <span class="micro-chip" style="background:#4caf50"></span><span class="micro-label">Inequality</span>
-                        <span class="micro-chip" style="background:#a67c52"></span><span class="micro-label">Combined</span>
-                    </div>
-                </div>
-                <div class="toggle-cluster">
-                    <button class="toggle-btn active" id="toggle-combined">Combined</button>
-                    <button class="toggle-btn" id="toggle-carbon">Carbon</button>
-                    <button class="toggle-btn" id="toggle-inequality">Inequality</button>
-                </div>
-                <div class="sidebar-tabs">
-                    <button class="tab-btn active" id="tab-explore">Explore</button>
-                    <button class="tab-btn" id="tab-legend">Legend</button>
-                </div>
-                <div id="tab-content-explore" class="tab-content" style="display:block;"></div>
-                <div id="tab-content-legend" class="tab-content" style="display:none;">
-                    <div class="legend">
-                        <div id="dynamic-legends"></div>
+                    <!-- Probe mode content (hidden by default) -->
+                    <div id="probe-panel" style="display:none;">
+                        <div class="probe-title">Location Probe</div>
+                        <div class="probe-metrics">
+                            <div class="probe-row"><span>Carbon Index</span><span id="probe-carbon">0.71</span></div>
+                            <div class="probe-row"><span>Inequality Index</span><span id="probe-inequality">0.83</span></div>
+                            <div class="probe-row"><span>Combined Pressure</span><span id="probe-combined">High</span></div>
+                        </div>
+                        <div class="probe-message" id="probe-message" style="display:none;">Move the lens to read the city</div>
                     </div>
                 </div>
             </aside>
-            <main class="map-panel">
-                <div id="map"></div>
-                <div id="tooltip" class="tooltip" style="display:none;"></div>
-            </main>
+
+                <main class="map-panel">
+                        <div id="map"></div>
+                        <div id="tooltip" class="tooltip" style="display:none;"></div>
+                </main>
         </div>
+
         <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
         <script>
             // Tab switching logic

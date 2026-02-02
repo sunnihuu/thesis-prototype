@@ -1,3 +1,112 @@
+// ========== Mapbox GL JS 双地图 + Probe Lens 精简骨架 ========== //
+mapboxgl.accessToken = 'pk.eyJ1Ijoic3VubmlodSIsImEiOiJjbWQ2bDBwNzcwMThwMm9weTVjc2JuNG90In0.sVXA1xGrFWnG-1ZV_EyO1w';
+
+// ---------- DOM ----------
+const wrapEl = document.getElementById("mapWrap");
+const baseEl = document.getElementById("mapBase");
+const topEl  = document.getElementById("mapTop");
+const lensEl = document.getElementById("lens");
+const overviewBtn = document.getElementById("mode-overview");
+const probeBtn    = document.getElementById("mode-probe");
+const panelOverview = document.getElementById("overview-panel");
+const panelProbe    = document.getElementById("probe-panel");
+const slider = document.getElementById("tension-slider");
+const legendEl = document.getElementById("dynamic-legends");
+
+// ---------- Config ----------
+const STYLE_URL = "mapbox://styles/mapbox/light-v10";
+const LENS_RADIUS = 120;
+let probeOn = false;
+
+// ---------- Map init ----------
+const mapBase = new mapboxgl.Map({
+    container: "mapBase",
+    style: STYLE_URL,
+    center: [-73.94, 40.70],
+    zoom: 10.5,
+    pitch: 0,
+    bearing: 0,
+    attributionControl: true,
+});
+const mapTop = new mapboxgl.Map({
+    container: "mapTop",
+    style: STYLE_URL,
+    center: [-73.94, 40.70],
+    zoom: 10.5,
+    pitch: 0,
+    bearing: 0,
+    attributionControl: false,
+    interactive: false,
+});
+mapBase.on("move", () => {
+    const c = mapBase.getCenter();
+    mapTop.jumpTo({
+        center: c,
+        zoom: mapBase.getZoom(),
+        bearing: mapBase.getBearing(),
+        pitch: mapBase.getPitch(),
+    });
+});
+mapBase.on("load", () => {
+    addProjectLayers(mapBase);
+    mapTop.once("load", () => {
+        addProjectLayers(mapTop);
+        applyTopMapMuting(mapTop);
+    });
+});
+
+// ---------- Probe Mode mechanics ----------
+function setProbeMode(on) {
+    probeOn = on;
+    if (panelOverview && panelProbe) {
+        panelOverview.style.display = on ? "none" : "block";
+        panelProbe.style.display    = on ? "block" : "none";
+    }
+    if (slider) slider.style.display = on ? "none" : "block";
+    if (legendEl) legendEl.style.display = on ? "none" : "block";
+    if (!on) {
+        baseEl.style.clipPath = "none";
+        lensEl.style.display = "none";
+        return;
+    }
+    lensEl.style.display = "block";
+}
+function onMouseMove(e) {
+    if (!probeOn) return;
+    const rect = wrapEl.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    lensEl.style.left = `${x}px`;
+    lensEl.style.top = `${y}px`;
+    baseEl.style.clipPath = `circle(${LENS_RADIUS}px at ${x}px ${y}px)`;
+    // panelProbe.innerHTML = `Location Probe<br>Carbon: 0.71<br>Inequality: 0.83<br>Combined: High`; // 可用假数据
+}
+wrapEl.addEventListener("mousemove", onMouseMove);
+wrapEl.addEventListener("mouseleave", () => { if (probeOn) lensEl.style.display = "none"; });
+wrapEl.addEventListener("mouseenter", () => { if (probeOn) lensEl.style.display = "block"; });
+overviewBtn.addEventListener("click", () => setProbeMode(false));
+probeBtn.addEventListener("click", () => setProbeMode(true));
+setProbeMode(false);
+
+// ---------- 图层加载插槽 ----------
+function addProjectLayers(map) {
+    // 把你原有 addSource/addLayer 逻辑放这里
+}
+function applyTopMapMuting(map) {
+    const layers = map.getStyle().layers || [];
+    for (const l of layers) {
+        if (!l.id) continue;
+        if (l.type === "fill") {
+            try { map.setPaintProperty(l.id, "fill-opacity", 0.15); } catch (err) {}
+        }
+        if (l.type === "line") {
+            try { map.setPaintProperty(l.id, "line-opacity", 0.20); } catch (err) {}
+        }
+        if (l.type === "circle") {
+            try { map.setPaintProperty(l.id, "circle-opacity", 0.20); } catch (err) {}
+        }
+    }
+}
 
 // Mapbox access token provided by user
 mapboxgl.accessToken = 'pk.eyJ1Ijoic3VubmlodSIsImEiOiJjbWQ2bDBwNzcwMThwMm9weTVjc2JuNG90In0.sVXA1xGrFWnG-1ZV_EyO1w';
@@ -132,27 +241,68 @@ map.addControl(new mapboxgl.NavigationControl());
 
 // Slider logic (placeholder for real data update)
 const slider = document.getElementById('tension-slider');
-slider.addEventListener('input', (e) => {
-    // Placeholder: update map layer based on slider value
-    // In a real app, this would update the composite choropleth
-    // For now, just log the value
-    console.log('Slider value:', e.target.value);
-});
+if (slider) {
+    slider.addEventListener('input', (e) => {
+        // Placeholder: update map layer based on slider value
+        // In a real app, this would update the composite choropleth
+        // For now, just log the value
+        console.log('Slider value:', e.target.value);
+    });
+}
 
-// Tooltip logic for truck routes
+// Mode switching logic
+const modeOverviewBtn = document.getElementById('mode-overview');
+const modeProbeBtn = document.getElementById('mode-probe');
+const overviewPanel = document.getElementById('overview-panel');
+const probePanel = document.getElementById('probe-panel');
+const legend = document.getElementById('dynamic-legends');
+const tensionBarSection = document.querySelector('.tension-bar-section');
+const toggleCluster = document.querySelector('.toggle-cluster');
+
+function setMode(mode) {
+    if (mode === 'overview') {
+        modeOverviewBtn.classList.add('active');
+        modeProbeBtn.classList.remove('active');
+        overviewPanel.style.display = '';
+        probePanel.style.display = 'none';
+        if (tensionBarSection) tensionBarSection.style.display = '';
+        if (toggleCluster) toggleCluster.style.display = '';
+        if (legend) legend.style.display = '';
+    } else {
+        modeOverviewBtn.classList.remove('active');
+        modeProbeBtn.classList.add('active');
+        overviewPanel.style.display = 'none';
+        probePanel.style.display = '';
+        if (tensionBarSection) tensionBarSection.style.display = 'none';
+        if (toggleCluster) toggleCluster.style.display = 'none';
+        if (legend) legend.style.display = 'none';
+    }
+}
+
+if (modeOverviewBtn && modeProbeBtn) {
+    modeOverviewBtn.addEventListener('click', () => setMode('overview'));
+    modeProbeBtn.addEventListener('click', () => setMode('probe'));
+}
+
+// Tooltip logic for truck routes (remains in overview mode only)
 const tooltip = document.getElementById('tooltip');
 map.on('mousemove', (e) => {
-    const features = map.queryRenderedFeatures(e.point, { layers: ['nyc-truck-routes'] });
-    if (features.length > 0) {
-        const f = features[0];
-        tooltip.style.display = 'block';
-        tooltip.style.left = (e.point.x + 20) + 'px';
-        tooltip.style.top = (e.point.y + 20) + 'px';
-        tooltip.innerHTML =
-            `<strong>${f.properties.street || 'Unknown Street'}</strong><br>` +
-            `Borough: ${f.properties.boroname || 'N/A'}<br>` +
-            `Route Type: ${f.properties.routetype || 'N/A'}<br>` +
-            `Truck Route: ${f.properties.truckroute === 'Y' ? 'Yes (dashed)' : 'No (solid)'}`;
+    // Only show tooltip in overview mode
+    if (modeOverviewBtn.classList.contains('active')) {
+        const features = map.queryRenderedFeatures(e.point, { layers: ['nyc-truck-routes'] });
+        if (features.length > 0) {
+            const f = features[0];
+            tooltip.style.display = 'block';
+            tooltip.style.left = (e.point.x + 20) + 'px';
+            tooltip.style.top = (e.point.y + 20) + 'px';
+            tooltip.innerHTML =
+                `<strong>${f.properties.street || 'Unknown Street'}</strong><br>` +
+                `Borough: ${f.properties.boroname || 'N/A'}<br>` +
+                `Route Type: ${f.properties.routetype || 'N/A'}<br>` +
+                `Truck Route: ${f.properties.truckroute === 'Y' ? 'Yes (dashed)' : 'No (solid)'}`;
+        } else {
+            tooltip.style.display = 'none';
+        }
     } else {
         tooltip.style.display = 'none';
     }
