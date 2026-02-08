@@ -13,27 +13,40 @@
 <body>
         <div class="urban-system-container">
             <aside class="sidebar">
-                <!-- 无模式切换按钮，仅保留原始结构 -->
                 <div id="sidebar-content">
-                    <!-- Overview mode content (default) -->
                     <div id="overview-panel">
                         <h1 class="system-question-title">What does it take to feed a city?</h1>
                         <div class="system-question-sub">A systems lens on urban food, logistics, and equity.</div>
-                        <div class="system-tension-abstract">
-                            <span class="system-tension-label-left">Carbon Impact</span>
-                            <span class="system-tension-visual-axis">
-                                <span class="system-tension-tick"></span>
-                                <span class="system-tension-tick"></span>
-                                <span class="system-tension-tick"></span>
-                            </span>
-                            <span class="system-tension-label-right">Inequality</span>
+                        <div class="lens-selector-container">
+                            <span class="system-view-label">City Food System Lenses</span>
+                            <div class="system-tension-abstract">
+                                <span class="system-tension-label-left">Footprint Logic</span>
+                                <div class="lens-slider-track">
+                                    <input type="range" min="0" max="2" value="1" step="1" class="lens-slider" id="lens-slider">
+                                    <div class="lens-slider-ticks">
+                                        <span class="lens-tick"></span>
+                                        <span class="lens-tick"></span>
+                                        <span class="lens-tick"></span>
+                                    </div>
+                                </div>
+                                <span class="system-tension-label-right">Inequality</span>
+                            </div>
                         </div>
                         <div class="system-view-mode">
-                            <span class="system-view-label">Logistics Fragility</span>
+                            <span class="system-view-label">Food Supply Fragility</span>
                             <div class="system-view-selector refined-view">
                                 <button class="system-view-btn refined-btn active" id="toggle-combined">Logistics</button>
                                 <button class="system-view-btn refined-btn" id="toggle-carbon">Storage</button>
                                 <button class="system-view-btn refined-btn" id="toggle-inequality">Inequality</button>
+                            </div>
+                        </div>
+                        
+                        <div class="system-view-mode">
+                            <span class="system-view-label">Footprint Logic</span>
+                            <div class="system-view-selector refined-view">
+                                <button class="system-view-btn refined-btn" id="toggle-lastmile">Delivery</button>
+                                <button class="system-view-btn refined-btn" id="toggle-chain">Cold Chain</button>
+                                <button class="system-view-btn refined-btn" id="toggle-hubs">Centralization</button>
                             </div>
                         </div>
                         
@@ -151,6 +164,14 @@
                         <script>
                             // Legend tab switching logic
                             document.addEventListener('DOMContentLoaded', function() {
+                                // City Food System Lens Slider
+                                const lensSlider = document.getElementById('lens-slider');
+                                
+                                lensSlider.addEventListener('input', function() {
+                                    const value = parseInt(this.value);
+                                    console.log('Lens slider changed to:', value === 0 ? 'Footprint Logic' : value === 1 ? 'Balanced' : 'Inequality');
+                                });
+                                
                                 // Handle main view buttons (Logistics, Storage, Inequality)
                                 const btnLogistics = document.getElementById('toggle-combined');
                                 const btnStorage = document.getElementById('toggle-carbon');

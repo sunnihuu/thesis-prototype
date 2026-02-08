@@ -1,10 +1,10 @@
-// ========== Mapbox GL JS 单地图精简版 ========== //
+// Mapbox GL JS Map Initialization
 
 mapboxgl.accessToken = 'pk.eyJ1Ijoic3VubmlodSIsImEiOiJjbWQ2bDBwNzcwMThwMm9weTVjc2JuNG90In0.sVXA1xGrFWnG-1ZV_EyO1w';
 
 let map; // Global map variable for layer control
 document.addEventListener('DOMContentLoaded', function() {
-    // 初始化地图
+    // Initialize map
     map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/light-v10',
@@ -405,5 +405,5 @@ document.addEventListener('DOMContentLoaded', function() {
         map.on('mouseout', () => {
             tooltip.style.display = 'none';
         });
-    }); // <-- 关闭 map.on('load', ...)
-}); // <-- 关闭 DOMContentLoaded
+    });
+});
