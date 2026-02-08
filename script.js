@@ -246,20 +246,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         <!-- PART 2: CONCENTRATION EVIDENCE -->
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
-                            <div style="padding: 12px; background: #f9fafb; border-left: 3px solid #2563eb; border-radius: 4px;">
+                            <div style="padding: 12px; background: #f0fdf4; border: 1px solid #16a34a; border-radius: 6px;">
                                 <div style="font-size: 0.75em; color: #6b7280; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 6px;">Unique Companies</div>
-                                <div style="font-size: 1.8em; font-weight: 700; color: #2563eb;">${uniqueCompanies}</div>
+                                <div style="font-size: 1.8em; font-weight: 700; color: #16a34a;">${uniqueCompanies}</div>
                                 <div style="font-size: 0.8em; color: #9ca3af; margin-top: 4px;">licensed entities</div>
                             </div>
-                            <div style="padding: 12px; background: #f9fafb; border-left: 3px solid #f59e0b; border-radius: 4px;">
+                            <div style="padding: 12px; background: #f0fdf4; border: 1px solid #16a34a; border-radius: 6px;">
                                 <div style="font-size: 0.75em; color: #6b7280; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 6px;">Market Type</div>
-                                <div style="font-size: 1.3em; font-weight: 700; color: #f59e0b;">${marketType}</div>
+                                <div style="font-size: 1.3em; font-weight: 700; color: #16a34a;">${marketType}</div>
                             </div>
                         </div>
                         
                         <!-- PART 3: SYSTEM-LEVEL JUDGMENT -->
-                        <div style="padding: 12px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 4px; margin-bottom: 14px;">
-                            <div style="font-size: 0.9em; color: #78350f; line-height: 1.6;">${judgment}</div>
+                        <div style="padding: 12px; background: #f0fdf4; border: 1px solid #16a34a; border-radius: 6px; margin-bottom: 14px;">
+                            <div style="font-size: 0.9em; color: #27542a; line-height: 1.6;">${judgment}</div>
                         </div>
                         
                         <!-- PART 4: OPTIONAL DRILL-IN -->
