@@ -35,7 +35,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             'Through', '#1982c4',   // Riso Blue
                             /* other */ '#6a4c93'    // Riso Purple
                         ],
-                        'line-width': 2.5,
+                        'line-width': [
+                            'interpolate',
+                            ['linear'],
+                            ['zoom'],
+                            9, 0.5,   // Very thin when zoomed out
+                            11, 1.5,  // Medium at mid zoom
+                            13, 2.5,  // Current width at close zoom
+                            15, 3     // Slightly thicker when very close
+                        ],
                         'line-opacity': 0.85,
                         'line-dasharray': [
                             'case',
@@ -64,11 +72,17 @@ document.addEventListener('DOMContentLoaded', function() {
             type: 'fill',
             source: 'stormwater-flood',
             layout: {
-                'visibility': 'none' // Initially hidden
+                'visibility': 'visible'
             },
             paint: {
-                'fill-color': '#4ecdc4',
-                'fill-opacity': 0.6,
+                'fill-color': [
+                    'match',
+                    ['get', 'Flooding_Category'],
+                    1, '#6dd5ed', // Category 1: Nuisance flooding (light cyan-blue)
+                    2, '#2193b0', // Category 2: Deep/contiguous flooding (deep blue)
+                    '#4ecdc4'     // default
+                ],
+                'fill-opacity': 0.75,
                 'fill-outline-color': '#2a9d8f'
             }
         });
@@ -81,20 +95,21 @@ document.addEventListener('DOMContentLoaded', function() {
             type: 'geojson',
             data: 'data/nyc-wholesale-markets-clean.geojson'
         });
+        
         map.addLayer({
             id: 'wholesale-markets',
             type: 'circle',
             source: 'wholesale-markets',
             layout: {
-                'visibility': 'none' // Initially hidden
+                'visibility': 'visible'
             },
             paint: {
                 'circle-radius': [
                     'interpolate',
                     ['linear'],
                     ['zoom'],
-                    10, 3,
-                    15, 8
+                    10, 5,
+                    15, 12
                 ],
                 'circle-color': [
                     'match',
@@ -105,11 +120,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Adjacent to Hunts Point Market', '#f39c12',
                     'Gansevoort Meat Market', '#9b59b6',
                     'Brooklyn Wholesale Meat Market', '#c0392b',
-                    '#95a5a6' // default gray for other markets
+                    '#95a5a6'
                 ],
-                'circle-opacity': 0.8,
+                'circle-opacity': 0.9,
                 'circle-stroke-width': 1,
-                'circle-stroke-color': '#ffffff'
+                'circle-stroke-color': '#ffffff',
+                'circle-stroke-opacity': 1
             }
         });
         
@@ -128,14 +144,21 @@ document.addEventListener('DOMContentLoaded', function() {
             const marketType = e.features[0].properties.MARKET;
             const marketName = e.features[0].properties.NAME;
             
-            // Ensure popup appears at correct location
             while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                 coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
             }
             
             marketPopup
                 .setLngLat(coordinates)
-                .setHTML(`<strong>${marketName || 'Unknown'}</strong><br/>${marketType || 'Market'}`)
+                .setHTML(`
+                    <div style="font-family: 'Switzer', sans-serif;">
+                        <strong style="font-size: 1.1em; color: #1a1a1a;">${marketName || 'Unknown Location'}</strong>
+                        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
+                            <div style="font-size: 0.85em; color: #6b7280; margin-bottom: 4px;">Supplied through:</div>
+                            <div style="font-size: 0.95em; color: #2563eb; font-weight: 500;">${marketType || 'Market System'}</div>
+                        </div>
+                    </div>
+                `)
                 .addTo(map);
         });
 
@@ -144,13 +167,116 @@ document.addEventListener('DOMContentLoaded', function() {
             marketPopup.remove();
         });
 
-        // Add Census Tracts for interactive selection/highlighting
-        map.addSource('census-tracts', {
-            type: 'geojson',
-            data: 'data/census-tracts.geojson'
+        // Click handler for market nodes - shows market summary panel
+        map.on('click', 'wholesale-markets', (e) => {
+            const clickedMarket = e.features[0].properties.MARKET;
+            
+            // Get all features from the wholesale-markets source
+            const allFeatures = map.querySourceFeatures('wholesale-markets');
+            
+            // Count companies by market type
+            const marketCounts = {};
+            allFeatures.forEach(feature => {
+                const market = feature.properties.MARKET;
+                marketCounts[market] = (marketCounts[market] || 0) + 1;
+            });
+            
+            const companyCount = marketCounts[clickedMarket] || 0;
+            
+            // Determine market type category
+            let typeCategory = 'Mixed';
+            if (clickedMarket.includes('Produce')) typeCategory = 'Produce';
+            else if (clickedMarket.includes('Meat')) typeCategory = 'Meat';
+            else if (clickedMarket.includes('Fish') || clickedMarket.includes('Seafood')) typeCategory = 'Seafood';
+            
+            // Create summary explanation
+            const explanations = {
+                'Produce': 'This concentration of produce distributors makes the area a critical node in NYC\'s fresh food distribution system.',
+                'Meat': 'This concentration of meat wholesalers represents a critical choke point in the city\'s protein supply chain.',
+                'Seafood': 'This concentration of seafood importers represents a critical node for NYC\'s seafood supply.',
+                'Mixed': 'This market concentration represents a critical infrastructure node in NYC\'s food distribution system.'
+            };
+            
+            const explanation = explanations[typeCategory] || explanations['Mixed'];
+            
+            // Get sample companies
+            const sampleCompanies = allFeatures
+                .filter(f => f.properties.MARKET === clickedMarket)
+                .slice(0, 5)
+                .map(f => ({
+                    name: f.properties.NAME,
+                    market: f.properties.MARKET
+                }));
+            
+            // Show market detail panel
+            const marketPanel = document.getElementById('market-detail-panel');
+            const contentDiv = document.getElementById('market-detail-content');
+            
+            let companiesHTML = `
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #d1d5db;">
+                    <a href="#" onclick="toggleCompanies(event)" style="color: #2563eb; text-decoration: none; font-size: 0.9em; font-weight: 500;">+ View example companies</a>
+                    <div id="sample-companies" style="display: none; margin-top: 8px; padding: 8px; background: #fff; border-left: 3px solid #dbeafe;">
+                        <div style="font-size: 0.8em; color: #1e40af; font-weight: 500; margin-bottom: 6px;">Sample Licensed Entities:</div>
+            `;
+            
+            sampleCompanies.forEach((company, idx) => {
+                companiesHTML += `<div style="font-size: 0.85em; color: #4b5563; margin: 4px 0;">• ${company.name}</div>`;
+            });
+            
+            companiesHTML += `
+                        <div style="font-size: 0.75em; color: #9ca3af; margin-top: 8px; font-style: italic; line-height: 1.4;">
+                            Note: This dataset records licensed wholesale entities but does not capture downstream delivery routes or customer locations.
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            contentDiv.innerHTML = `
+                <div style="margin-bottom: 12px;">
+                    <div style="font-size: 0.85em; color: #6b7280; margin-bottom: 4px;">Market Node</div>
+                    <div style="font-size: 1.15em; font-weight: 600; color: #1a1a1a;">${clickedMarket}</div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div style="padding: 8px; background: #fff; border-radius: 4px; border: 1px solid #e5e7eb;">
+                        <div style="font-size: 0.75em; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Licensed Companies</div>
+                        <div style="font-size: 1.3em; font-weight: 700; color: #2563eb;">${companyCount}+</div>
+                    </div>
+                    <div style="padding: 8px; background: #fff; border-radius: 4px; border: 1px solid #e5e7eb;">
+                        <div style="font-size: 0.75em; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Type</div>
+                        <div style="font-size: 1.1em; font-weight: 600; color: #374151;">${typeCategory}</div>
+                    </div>
+                </div>
+                
+                <div style="padding: 10px; background: #fffbeb; border-left: 3px solid #fbbf24; border-radius: 4px; margin-bottom: 12px;">
+                    <div style="font-size: 0.9em; color: #78350f; line-height: 1.5;">${explanation}</div>
+                </div>
+                
+                ${companiesHTML}
+            `;
+            
+            marketPanel.style.display = 'block';
+            
+            // Close button
+            document.getElementById('market-detail-close').onclick = () => {
+                marketPanel.style.display = 'none';
+            };
         });
         
-        console.log('Census tracts source added');
+        // Global function for toggling companies display
+        window.toggleCompanies = function(e) {
+            e.preventDefault();
+            const companiesDiv = document.getElementById('sample-companies');
+            companiesDiv.style.display = companiesDiv.style.display === 'none' ? 'block' : 'none';
+        };
+
+        // Add Census Tracts with pre-calculated logistics fragility scores
+        map.addSource('census-tracts', {
+            type: 'geojson',
+            data: 'data/census-tracts-fragility.geojson'
+        });
+        
+        console.log('Census tracts source added with pre-calculated fragility scores');
         
         // Wait for census data to load before adding layers
         map.on('sourcedata', (e) => {
@@ -161,28 +287,38 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Add census tract fill layer (invisible by default)
+        // Add census tract fill layer colored by fragility score
         map.addLayer({
             id: 'census-tracts-fill',
             type: 'fill',
             source: 'census-tracts',
             paint: {
-                'fill-color': '#627BC1',
-                'fill-opacity': 0
+                'fill-color': [
+                    'step',
+                    ['get', 'logistics_fragility'],
+                    'rgba(255, 255, 255, 0)', // very low fragility: transparent
+                    0.2, '#fef3c7', // low fragility: light yellow
+                    0.4, '#fcd34d', // yellow
+                    0.5, '#fb923c', // orange
+                    0.6, '#f87171', // light red
+                    0.7, '#ef4444', // red
+                    0.8, '#dc2626'  // high fragility: deep red
+                ],
+                'fill-opacity': 0.7
             }
-        });
+        }, 'nyc-truck-routes'); // Add below truck routes
         
         console.log('Census tracts fill layer added');
         
-        // Add census tract outline layer (invisible by default)
+        // Add census tract outline layer
         map.addLayer({
             id: 'census-tracts-outline',
             type: 'line',
             source: 'census-tracts',
             paint: {
-                'line-color': '#627BC1',
-                'line-width': 1,
-                'line-opacity': 0
+                'line-color': '#d1d5db',
+                'line-width': 0.5,
+                'line-opacity': 0.6
             }
         });
         
@@ -304,7 +440,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     id: 'nyc-fresh-zoining',
                     type: 'fill',
                     source: 'nyc-fresh-zoining',
-                    layout: {},
+                    layout: {
+                        'visibility': 'none'
+                    },
                     paint: {
                         'fill-color': matchExpr,
                         'fill-opacity': 0.45
@@ -314,15 +452,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const legend = document.createElement('div');
                 legend.className = 'map-legend';
                 legend.innerHTML = `
-                    <div style="font-weight:700;font-size:1.08em;margin-bottom:10px;">City Support for New Grocery Stores</div>
-                    <div class="legend-row"><span class="legend-chip" style="background:#ff595e"></span><span class="legend-label"><b>Strong City Support</b></span></div>
-                    <div class="legend-desc">Zoning changes + tax incentives</div>
-                    <div class="legend-row"><span class="legend-chip" style="background:#8ac926"></span><span class="legend-label"><b>Planning Support</b></span></div>
-                    <div class="legend-desc">Zoning flexibility only</div>
-                    <div class="legend-row"><span class="legend-chip" style="background:#ffca3a"></span><span class="legend-label"><b>Financial Support</b></span></div>
-                    <div class="legend-desc">Tax incentives only</div>
-                    <div class="legend-note">📌 <b>Note:</b> These zones indicate where the City encourages supermarket development through planning and fiscal incentives.</div>
-                    <hr style="margin:18px 0 10px 0;">
                     <div style="font-weight:700;font-size:1.08em;margin-bottom:10px;">Truck Routes</div>
                     <div class="legend-row"><span class="legend-line legend-dashed" style="border-top:2.5px dashed #ff595e;"></span><span class="legend-label">Local (riso red dashed)</span></div>
                     <div class="legend-row"><span class="legend-line legend-dashed" style="border-top:2.5px dashed #1982c4;"></span><span class="legend-label">Through (riso blue dashed)</span></div>

@@ -36,7 +36,7 @@
                             <span class="system-view-label">Food Supply Fragility</span>
                             <div class="system-view-selector refined-view">
                                 <button class="system-view-btn refined-btn active" id="toggle-combined">Logistics</button>
-                                <button class="system-view-btn refined-btn" id="toggle-carbon">Storage</button>
+                                <button class="system-view-btn refined-btn" id="toggle-carbon">Storage Buffer</button>
                                 <button class="system-view-btn refined-btn" id="toggle-inequality">Inequality</button>
                             </div>
                         </div>
@@ -53,13 +53,24 @@
                         <!-- LOGISTICS LEGEND TABS -->
                         <div class="panel-map-legend legend-tabs" id="logistics-legends">
                             <span class="system-view-label">Legend</span>
-                            <div class="legend-tab-header">
-                                <button class="legend-tab-btn" data-tab="truck">Truck Routes</button>
-                                <button class="legend-tab-btn" data-tab="hunts">Wholesale Market</button>
-                                <button class="legend-tab-btn" data-tab="flood">Flood Zones</button>
+                            
+                            <!-- Logistics Fragility Overview -->
+                            <div class="panel-legend-title" style="margin-bottom: 12px;">Logistics Vulnerability</div>
+                            <div class="legend-caption" style="margin-bottom: 12px;">Higher values indicate areas with strong dependence on truck corridors, high exposure to flooding, and close proximity to centralized food distribution hubs.</div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                                <span style="font-size: 0.85em; color: #6b7280;">Low Risk</span>
+                                <div style="flex: 1; height: 12px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, #fef3c7 20%, #fcd34d 35%, #fb923c 50%, #f87171 65%, #ef4444 80%, #dc2626 100%); border-radius: 6px; border: 1px solid #e5e7eb;"></div>
+                                <span style="font-size: 0.85em; color: #6b7280;">High Risk</span>
                             </div>
-                            <div class="legend-tab-content" data-content="truck" style="display:none;">
+                            
+                            <div class="legend-tab-header">
+                                <button class="legend-tab-btn active" data-tab="truck">Truck Routes</button>
+                                <button class="legend-tab-btn active" data-tab="hunts">Wholesale Market</button>
+                                <button class="legend-tab-btn active" data-tab="flood">Flood Zones</button>
+                            </div>
+                            <div class="legend-tab-content" data-content="truck">
                                 <div class="panel-legend-title">Truck Routes</div>
+                                <div class="legend-caption">Thicker routes indicate higher dependency on these corridors for food distribution.</div>
                                 <div class="panel-legend-row">
                                     <span class="panel-legend-color" style="background:#1976d2;"></span>
                                     <span class="panel-legend-line panel-legend-dashed" style="border-top:2.5px dashed #1976d2;"></span>
@@ -75,13 +86,10 @@
                                     <span class="panel-legend-line panel-legend-solid" style="border-top:2.5px solid #888;"></span>
                                     <span class="panel-legend-label">Other</span>
                                 </div>
-                                <div class="transparency-control">
-                                    <label>Opacity</label>
-                                    <input type="range" min="0" max="100" value="100" class="opacity-slider" data-layer="truck">
-                                </div>
                             </div>
-                            <div class="legend-tab-content" data-content="hunts" style="display:none;">
+                            <div class="legend-tab-content" data-content="hunts">
                                 <div class="panel-legend-title">Wholesale Market</div>
+                                <div class="legend-caption">Historic market locations show where food enters the city's distribution system.</div>
                                 <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#3498db;"></span><span class="panel-legend-label">Fish Market</span></div>
                                 <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#e74c3c;"></span><span class="panel-legend-label">Meat Market</span></div>
                                 <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#27ae60;"></span><span class="panel-legend-label">Produce Market</span></div>
@@ -89,18 +97,12 @@
                                 <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#9b59b6;"></span><span class="panel-legend-label">Gansevoort Market</span></div>
                                 <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#c0392b;"></span><span class="panel-legend-label">Brooklyn Market</span></div>
                                 <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#95a5a6;"></span><span class="panel-legend-label">Other Markets</span></div>
-                                <div class="transparency-control">
-                                    <label>Opacity</label>
-                                    <input type="range" min="0" max="100" value="100" class="opacity-slider" data-layer="hunts">
-                                </div>
                             </div>
-                            <div class="legend-tab-content" data-content="flood" style="display:none;">
+                            <div class="legend-tab-content" data-content="flood">
                                 <div class="panel-legend-title">Flood Zones</div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#4ecdc4;"></span><span class="panel-legend-label">Flood Risk Areas</span></div>
-                                <div class="transparency-control">
-                                    <label>Opacity</label>
-                                    <input type="range" min="0" max="100" value="100" class="opacity-slider" data-layer="flood">
-                                </div>
+                                <div class="legend-caption">Flood-prone segments represent potential points of failure in the food supply chain.</div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#6dd5ed;"></span><span class="panel-legend-label">Nuisance Flooding (≥4" & <1')</span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#2193b0;"></span><span class="panel-legend-label">Deep & Contiguous (≥1')</span></div>
                             </div>
                         </div>
                         
@@ -113,22 +115,16 @@
                             </div>
                             <div class="legend-tab-content" data-content="cold" style="display:none;">
                                 <div class="panel-legend-title">Cold Storage/Warehouse</div>
+                                <div class="legend-caption">Storage capacity determines resilience during supply disruptions.</div>
                                 <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#339af0;"></span><span class="panel-legend-label">Cold Storage Facilities</span></div>
                                 <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#845ef7;"></span><span class="panel-legend-label">Warehouses</span></div>
-                                <div class="transparency-control">
-                                    <label>Opacity</label>
-                                    <input type="range" min="0" max="100" value="100" class="opacity-slider" data-layer="cold">
-                                </div>
                             </div>
                             <div class="legend-tab-content" data-content="population" style="display:none;">
                                 <div class="panel-legend-title">Population Density</div>
+                                <div class="legend-caption">Higher density areas require more responsive distribution networks.</div>
                                 <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ffe066;"></span><span class="panel-legend-label">Low Density</span></div>
                                 <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ffa94d;"></span><span class="panel-legend-label">Medium Density</span></div>
                                 <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ff6b6b;"></span><span class="panel-legend-label">High Density</span></div>
-                                <div class="transparency-control">
-                                    <label>Opacity</label>
-                                    <input type="range" min="0" max="100" value="100" class="opacity-slider" data-layer="population">
-                                </div>
                             </div>
                         </div>
                         
@@ -141,23 +137,25 @@
                             </div>
                             <div class="legend-tab-content" data-content="income" style="display:none;">
                                 <div class="panel-legend-title">Income/Property</div>
+                                <div class="legend-caption">Economic disparities shape food access patterns and vulnerability.</div>
                                 <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#51cf66;"></span><span class="panel-legend-label">High Income</span></div>
                                 <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ffd43b;"></span><span class="panel-legend-label">Medium Income</span></div>
                                 <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ff6b6b;"></span><span class="panel-legend-label">Low Income</span></div>
-                                <div class="transparency-control">
-                                    <label>Opacity</label>
-                                    <input type="range" min="0" max="100" value="100" class="opacity-slider" data-layer="income">
-                                </div>
                             </div>
                             <div class="legend-tab-content" data-content="retail" style="display:none;">
                                 <div class="panel-legend-title">Food Retail Density</div>
+                                <div class="legend-caption">Low retail density areas may face limited access to fresh food options.</div>
                                 <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#37b24d;"></span><span class="panel-legend-label">High Density</span></div>
                                 <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#fab005;"></span><span class="panel-legend-label">Medium Density</span></div>
                                 <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#f03e3e;"></span><span class="panel-legend-label">Low Density</span></div>
-                                <div class="transparency-control">
-                                    <label>Opacity</label>
-                                    <input type="range" min="0" max="100" value="100" class="opacity-slider" data-layer="retail">
-                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- MARKET DETAIL PANEL (shown when user clicks a market node) -->
+                        <div id="market-detail-panel" style="display:none; margin-top: 20px; padding: 16px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb;">
+                            <button id="market-detail-close" style="float: right; background: none; border: none; font-size: 1.2em; cursor: pointer; color: #9ca3af;">&times;</button>
+                            <div id="market-detail-content">
+                                <!-- Dynamically populated -->
                             </div>
                         </div>
                         

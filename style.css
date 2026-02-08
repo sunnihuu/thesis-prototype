@@ -159,6 +159,14 @@
 	text-transform: uppercase;
 	letter-spacing: 0.08em;
 }
+.legend-caption {
+	font-family: 'Switzer', sans-serif;
+	font-size: 0.88em;
+	color: #9ca3af;
+	line-height: 1.5;
+	margin-bottom: 16px;
+	font-style: italic;
+}
 .panel-legend-row {
 	display: flex;
 	align-items: center;
