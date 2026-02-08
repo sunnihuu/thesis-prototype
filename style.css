@@ -67,6 +67,7 @@
 }
 .legend-tab-content {
 	padding: 0 2px;
+	margin-bottom: 20px;
 }
 .panel-legend-chip {
 	display: inline-block;
@@ -114,6 +115,55 @@
 .panel-legend-label {
 	font-size: 1em;
 	color: #666;
+}
+.transparency-control {
+	margin-top: 16px;
+	padding-top: 12px;
+	border-top: 1px solid #e8e8e8;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+.transparency-control label {
+	font-size: 0.95em;
+	color: #888;
+	font-weight: 500;
+	min-width: 60px;
+}
+.opacity-slider {
+	flex: 1;
+	-webkit-appearance: none;
+	appearance: none;
+	height: 4px;
+	border-radius: 2px;
+	background: #e0e0e0;
+	outline: none;
+	cursor: pointer;
+}
+.opacity-slider::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background: #1976d2;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+.opacity-slider::-webkit-slider-thumb:hover {
+	background: #1565c0;
+}
+.opacity-slider::-moz-range-thumb {
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background: #1976d2;
+	cursor: pointer;
+	border: none;
+	transition: background 0.2s;
+}
+.opacity-slider::-moz-range-thumb:hover {
+	background: #1565c0;
 }
 .system-tension-abstract {
 	display: flex;

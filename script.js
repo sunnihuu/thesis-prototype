@@ -2,7 +2,7 @@
 
 mapboxgl.accessToken = 'pk.eyJ1Ijoic3VubmlodSIsImEiOiJjbWQ2bDBwNzcwMThwMm9weTVjc2JuNG90In0.sVXA1xGrFWnG-1ZV_EyO1w';
 
-// let map; // Removed duplicate declaration
+let map; // Global map variable for layer control
 document.addEventListener('DOMContentLoaded', function() {
     // 初始化地图
     map = new mapboxgl.Map({
@@ -53,6 +53,232 @@ document.addEventListener('DOMContentLoaded', function() {
         map.fitBounds(nycBounds, { padding: 40 });
         // Add navigation controls
         map.addControl(new mapboxgl.NavigationControl());
+
+        // Add Stormwater Flood Zones GeoJSON (converted to WGS84)
+        map.addSource('stormwater-flood', {
+            type: 'geojson',
+            data: 'data/stormewater-flood-wgs84.geojson'
+        });
+        map.addLayer({
+            id: 'stormwater-flood',
+            type: 'fill',
+            source: 'stormwater-flood',
+            layout: {
+                'visibility': 'none' // Initially hidden
+            },
+            paint: {
+                'fill-color': '#4ecdc4',
+                'fill-opacity': 0.6,
+                'fill-outline-color': '#2a9d8f'
+            }
+        });
+        
+        // Log to verify layer is added
+        console.log('Stormwater flood layer added with WGS84 coordinates');
+
+        // Add Wholesale Markets GeoJSON
+        map.addSource('wholesale-markets', {
+            type: 'geojson',
+            data: 'data/nyc-wholesale-markets-clean.geojson'
+        });
+        map.addLayer({
+            id: 'wholesale-markets',
+            type: 'circle',
+            source: 'wholesale-markets',
+            layout: {
+                'visibility': 'none' // Initially hidden
+            },
+            paint: {
+                'circle-radius': [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    10, 3,
+                    15, 8
+                ],
+                'circle-color': [
+                    'match',
+                    ['get', 'MARKET'],
+                    'Hunts Point New Fulton Fish Market', '#3498db',
+                    'Hunts Point Meat Market', '#e74c3c',
+                    'Hunts Point Produce Market', '#27ae60',
+                    'Adjacent to Hunts Point Market', '#f39c12',
+                    'Gansevoort Meat Market', '#9b59b6',
+                    'Brooklyn Wholesale Meat Market', '#c0392b',
+                    '#95a5a6' // default gray for other markets
+                ],
+                'circle-opacity': 0.8,
+                'circle-stroke-width': 1,
+                'circle-stroke-color': '#ffffff'
+            }
+        });
+        
+        console.log('Wholesale markets layer added');
+
+        // Add hover popup for wholesale markets
+        const marketPopup = new mapboxgl.Popup({
+            closeButton: false,
+            closeOnClick: false
+        });
+
+        map.on('mouseenter', 'wholesale-markets', (e) => {
+            map.getCanvas().style.cursor = 'pointer';
+            
+            const coordinates = e.features[0].geometry.coordinates.slice();
+            const marketType = e.features[0].properties.MARKET;
+            const marketName = e.features[0].properties.NAME;
+            
+            // Ensure popup appears at correct location
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            }
+            
+            marketPopup
+                .setLngLat(coordinates)
+                .setHTML(`<strong>${marketName || 'Unknown'}</strong><br/>${marketType || 'Market'}`)
+                .addTo(map);
+        });
+
+        map.on('mouseleave', 'wholesale-markets', () => {
+            map.getCanvas().style.cursor = '';
+            marketPopup.remove();
+        });
+
+        // Add Census Tracts for interactive selection/highlighting
+        map.addSource('census-tracts', {
+            type: 'geojson',
+            data: 'data/census-tracts.geojson'
+        });
+        
+        console.log('Census tracts source added');
+        
+        // Wait for census data to load before adding layers
+        map.on('sourcedata', (e) => {
+            if (e.sourceId === 'census-tracts' && e.isSourceLoaded) {
+                console.log('Census tracts data loaded successfully');
+                const features = map.querySourceFeatures('census-tracts');
+                console.log(`Census tracts loaded: ${features.length} features`);
+            }
+        });
+        
+        // Add census tract fill layer (invisible by default)
+        map.addLayer({
+            id: 'census-tracts-fill',
+            type: 'fill',
+            source: 'census-tracts',
+            paint: {
+                'fill-color': '#627BC1',
+                'fill-opacity': 0
+            }
+        });
+        
+        console.log('Census tracts fill layer added');
+        
+        // Add census tract outline layer (invisible by default)
+        map.addLayer({
+            id: 'census-tracts-outline',
+            type: 'line',
+            source: 'census-tracts',
+            paint: {
+                'line-color': '#627BC1',
+                'line-width': 1,
+                'line-opacity': 0
+            }
+        });
+        
+        console.log('Census tracts outline layer added');
+        
+        // Add hover highlight layer
+        map.addLayer({
+            id: 'census-tracts-hover',
+            type: 'fill',
+            source: 'census-tracts',
+            paint: {
+                'fill-color': '#627BC1',
+                'fill-opacity': 0.3
+            },
+            filter: ['==', 'geoid', '']
+        });
+        
+        // Add selected tract highlight layer
+        map.addLayer({
+            id: 'census-tracts-selected',
+            type: 'line',
+            source: 'census-tracts',
+            paint: {
+                'line-color': '#1976d2',
+                'line-width': 3,
+                'line-opacity': 1
+            },
+            filter: ['==', 'geoid', '']
+        });
+        
+        let hoveredTractId = null;
+        let selectedTractId = null;
+        
+        // Hover effect
+        map.on('mousemove', 'census-tracts-fill', (e) => {
+            if (e.features.length > 0) {
+                const feature = e.features[0];
+                const tractId = feature.properties.geoid || feature.id || '';
+                
+                if (hoveredTractId !== tractId) {
+                    hoveredTractId = tractId;
+                    map.setFilter('census-tracts-hover', ['==', 'geoid', tractId]);
+                }
+                
+                map.getCanvas().style.cursor = 'pointer';
+            }
+        });
+        
+        map.on('mouseleave', 'census-tracts-fill', () => {
+            hoveredTractId = null;
+            map.setFilter('census-tracts-hover', ['==', 'geoid', '']);
+            map.getCanvas().style.cursor = '';
+        });
+        
+        // Click to select/deselect tract
+        map.on('click', 'census-tracts-fill', (e) => {
+            if (e.features.length > 0) {
+                const feature = e.features[0];
+                const tractId = feature.properties.geoid || feature.id || '';
+                
+                if (selectedTractId === tractId) {
+                    // Deselect if clicking the same tract
+                    selectedTractId = null;
+                    map.setFilter('census-tracts-selected', ['==', 'geoid', '']);
+                    console.log('Census tract deselected');
+                } else {
+                    // Select new tract
+                    selectedTractId = tractId;
+                    map.setFilter('census-tracts-selected', ['==', 'geoid', tractId]);
+                    console.log('Census tract selected:', tractId, feature.properties);
+                    
+                    // Zoom to the selected census tract
+                    const geometry = feature.geometry;
+                    if (geometry && geometry.coordinates) {
+                        // Calculate bounds from the polygon coordinates
+                        let bounds = new mapboxgl.LngLatBounds();
+                        
+                        const coords = geometry.type === 'Polygon' 
+                            ? geometry.coordinates[0] 
+                            : geometry.coordinates[0][0]; // MultiPolygon
+                        
+                        coords.forEach(coord => {
+                            bounds.extend(coord);
+                        });
+                        
+                        // Fit the map to the census tract bounds with padding
+                        map.fitBounds(bounds, {
+                            padding: 100,
+                            duration: 1000
+                        });
+                    }
+                }
+            }
+        });
+        
+        console.log('Census tracts layer added with hover and click interactions');
 
         // Add NYC Fresh Zoning GeoJSON as a fill layer
         map.addSource('nyc-fresh-zoining', {

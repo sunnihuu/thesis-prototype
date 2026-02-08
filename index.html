@@ -29,19 +29,23 @@
                             <span class="system-tension-label-right">Inequality</span>
                         </div>
                         <div class="system-view-mode">
-                            <span class="system-view-label">System View</span>
+                            <span class="system-view-label">Logistics Fragility</span>
                             <div class="system-view-selector refined-view">
-                                <button class="system-view-btn refined-btn active" id="toggle-combined">Combined</button>
-                                <button class="system-view-btn refined-btn" id="toggle-carbon">Carbon</button>
+                                <button class="system-view-btn refined-btn active" id="toggle-combined">Logistics</button>
+                                <button class="system-view-btn refined-btn" id="toggle-carbon">Storage</button>
                                 <button class="system-view-btn refined-btn" id="toggle-inequality">Inequality</button>
                             </div>
                         </div>
-                        <div class="panel-map-legend legend-tabs">
+                        
+                        <!-- LOGISTICS LEGEND TABS -->
+                        <div class="panel-map-legend legend-tabs" id="logistics-legends">
+                            <span class="system-view-label">Legend</span>
                             <div class="legend-tab-header">
-                                <button class="legend-tab-btn active" id="legend-tab-truck">Truck Routes</button>
-                                <button class="legend-tab-btn" id="legend-tab-zoning">Zoning</button>
+                                <button class="legend-tab-btn" data-tab="truck">Truck Routes</button>
+                                <button class="legend-tab-btn" data-tab="hunts">Wholesale Market</button>
+                                <button class="legend-tab-btn" data-tab="flood">Flood Zones</button>
                             </div>
-                            <div class="legend-tab-content" id="legend-content-truck">
+                            <div class="legend-tab-content" data-content="truck" style="display:none;">
                                 <div class="panel-legend-title">Truck Routes</div>
                                 <div class="panel-legend-row">
                                     <span class="panel-legend-color" style="background:#1976d2;"></span>
@@ -58,35 +62,192 @@
                                     <span class="panel-legend-line panel-legend-solid" style="border-top:2.5px solid #888;"></span>
                                     <span class="panel-legend-label">Other</span>
                                 </div>
+                                <div class="transparency-control">
+                                    <label>Opacity</label>
+                                    <input type="range" min="0" max="100" value="100" class="opacity-slider" data-layer="truck">
+                                </div>
                             </div>
-                            <div class="legend-tab-content" id="legend-content-zoning" style="display:none;">
-                                <div class="panel-legend-title">Zoning Incentives</div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#e74c3c;"></span><span class="panel-legend-label">Strong City Support<br><span class="panel-legend-desc">Zoning + tax incentives</span></span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#8e44ad;"></span><span class="panel-legend-label">Planning Support<br><span class="panel-legend-desc">Zoning flexibility only</span></span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#4caf50;"></span><span class="panel-legend-label">Financial Support<br><span class="panel-legend-desc">Tax incentives only</span></span></div>
+                            <div class="legend-tab-content" data-content="hunts" style="display:none;">
+                                <div class="panel-legend-title">Wholesale Market</div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#3498db;"></span><span class="panel-legend-label">Fish Market</span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#e74c3c;"></span><span class="panel-legend-label">Meat Market</span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#27ae60;"></span><span class="panel-legend-label">Produce Market</span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#f39c12;"></span><span class="panel-legend-label">Adjacent Markets</span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#9b59b6;"></span><span class="panel-legend-label">Gansevoort Market</span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#c0392b;"></span><span class="panel-legend-label">Brooklyn Market</span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#95a5a6;"></span><span class="panel-legend-label">Other Markets</span></div>
+                                <div class="transparency-control">
+                                    <label>Opacity</label>
+                                    <input type="range" min="0" max="100" value="100" class="opacity-slider" data-layer="hunts">
+                                </div>
+                            </div>
+                            <div class="legend-tab-content" data-content="flood" style="display:none;">
+                                <div class="panel-legend-title">Flood Zones</div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#4ecdc4;"></span><span class="panel-legend-label">Flood Risk Areas</span></div>
+                                <div class="transparency-control">
+                                    <label>Opacity</label>
+                                    <input type="range" min="0" max="100" value="100" class="opacity-slider" data-layer="flood">
+                                </div>
                             </div>
                         </div>
-                            <script>
+                        
+                        <!-- STORAGE LEGEND TABS -->
+                        <div class="panel-map-legend legend-tabs" id="storage-legends" style="display:none;">
+                            <span class="system-view-label">Legend</span>
+                            <div class="legend-tab-header">
+                                <button class="legend-tab-btn" data-tab="cold">Cold Storage/Warehouse</button>
+                                <button class="legend-tab-btn" data-tab="population">Population Density</button>
+                            </div>
+                            <div class="legend-tab-content" data-content="cold" style="display:none;">
+                                <div class="panel-legend-title">Cold Storage/Warehouse</div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#339af0;"></span><span class="panel-legend-label">Cold Storage Facilities</span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#845ef7;"></span><span class="panel-legend-label">Warehouses</span></div>
+                                <div class="transparency-control">
+                                    <label>Opacity</label>
+                                    <input type="range" min="0" max="100" value="100" class="opacity-slider" data-layer="cold">
+                                </div>
+                            </div>
+                            <div class="legend-tab-content" data-content="population" style="display:none;">
+                                <div class="panel-legend-title">Population Density</div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ffe066;"></span><span class="panel-legend-label">Low Density</span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ffa94d;"></span><span class="panel-legend-label">Medium Density</span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ff6b6b;"></span><span class="panel-legend-label">High Density</span></div>
+                                <div class="transparency-control">
+                                    <label>Opacity</label>
+                                    <input type="range" min="0" max="100" value="100" class="opacity-slider" data-layer="population">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- INEQUALITY LEGEND TABS -->
+                        <div class="panel-map-legend legend-tabs" id="inequality-legends" style="display:none;">
+                            <span class="system-view-label">Legend</span>
+                            <div class="legend-tab-header">
+                                <button class="legend-tab-btn" data-tab="income">Income/Property</button>
+                                <button class="legend-tab-btn" data-tab="retail">Food Retail Density</button>
+                            </div>
+                            <div class="legend-tab-content" data-content="income" style="display:none;">
+                                <div class="panel-legend-title">Income/Property</div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#51cf66;"></span><span class="panel-legend-label">High Income</span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ffd43b;"></span><span class="panel-legend-label">Medium Income</span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ff6b6b;"></span><span class="panel-legend-label">Low Income</span></div>
+                                <div class="transparency-control">
+                                    <label>Opacity</label>
+                                    <input type="range" min="0" max="100" value="100" class="opacity-slider" data-layer="income">
+                                </div>
+                            </div>
+                            <div class="legend-tab-content" data-content="retail" style="display:none;">
+                                <div class="panel-legend-title">Food Retail Density</div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#37b24d;"></span><span class="panel-legend-label">High Density</span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#fab005;"></span><span class="panel-legend-label">Medium Density</span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#f03e3e;"></span><span class="panel-legend-label">Low Density</span></div>
+                                <div class="transparency-control">
+                                    <label>Opacity</label>
+                                    <input type="range" min="0" max="100" value="100" class="opacity-slider" data-layer="retail">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <script>
                             // Legend tab switching logic
                             document.addEventListener('DOMContentLoaded', function() {
-                                const tabTruck = document.getElementById('legend-tab-truck');
-                                const tabZoning = document.getElementById('legend-tab-zoning');
-                                const contentTruck = document.getElementById('legend-content-truck');
-                                const contentZoning = document.getElementById('legend-content-zoning');
-                                if(tabTruck && tabZoning && contentTruck && contentZoning) {
-                                    tabTruck.addEventListener('click', function() {
-                                        tabTruck.classList.add('active');
-                                        tabZoning.classList.remove('active');
-                                        contentTruck.style.display = '';
-                                        contentZoning.style.display = 'none';
-                                    });
-                                    tabZoning.addEventListener('click', function() {
-                                        tabZoning.classList.add('active');
-                                        tabTruck.classList.remove('active');
-                                        contentZoning.style.display = '';
-                                        contentTruck.style.display = 'none';
+                                // Handle main view buttons (Logistics, Storage, Inequality)
+                                const btnLogistics = document.getElementById('toggle-combined');
+                                const btnStorage = document.getElementById('toggle-carbon');
+                                const btnInequality = document.getElementById('toggle-inequality');
+                                
+                                const logisticsLegends = document.getElementById('logistics-legends');
+                                const storageLegends = document.getElementById('storage-legends');
+                                const inequalityLegends = document.getElementById('inequality-legends');
+                                
+                                function switchView(activeBtn, activeLegend) {
+                                    // Update button states
+                                    [btnLogistics, btnStorage, btnInequality].forEach(btn => btn.classList.remove('active'));
+                                    activeBtn.classList.add('active');
+                                    
+                                    // Update legend visibility
+                                    [logisticsLegends, storageLegends, inequalityLegends].forEach(legend => legend.style.display = 'none');
+                                    activeLegend.style.display = '';
+                                    
+                                    // Hide all tabs and reset active states when switching views
+                                    activeLegend.querySelectorAll('.legend-tab-btn').forEach(btn => btn.classList.remove('active'));
+                                    activeLegend.querySelectorAll('.legend-tab-content').forEach(content => {
+                                        content.style.display = 'none';
                                     });
                                 }
+                                
+                                btnLogistics.addEventListener('click', () => switchView(btnLogistics, logisticsLegends));
+                                btnStorage.addEventListener('click', () => switchView(btnStorage, storageLegends));
+                                btnInequality.addEventListener('click', () => switchView(btnInequality, inequalityLegends));
+                                
+                                // Handle legend tab buttons within each view - TOGGLE functionality
+                                document.querySelectorAll('.legend-tab-btn').forEach(btn => {
+                                    btn.addEventListener('click', function() {
+                                        const tabName = this.getAttribute('data-tab');
+                                        const parentLegend = this.closest('.panel-map-legend');
+                                        const targetContent = parentLegend.querySelector(`[data-content="${tabName}"]`);
+                                        
+                                        // Toggle the button active state
+                                        this.classList.toggle('active');
+                                        
+                                        // Toggle the content visibility
+                                        if (targetContent) {
+                                            if (targetContent.style.display === 'none' || !targetContent.style.display) {
+                                                targetContent.style.display = '';
+                                            } else {
+                                                targetContent.style.display = 'none';
+                                            }
+                                        }
+                                        
+                                        // Control map layer visibility for Flood Zones
+                                        if (tabName === 'flood') {
+                                            console.log('Flood tab clicked, map exists:', typeof map !== 'undefined');
+                                            if (typeof map !== 'undefined') {
+                                                const hasLayer = map.getLayer('stormwater-flood');
+                                                console.log('Flood layer exists:', !!hasLayer);
+                                                if (hasLayer) {
+                                                    const isActive = this.classList.contains('active');
+                                                    console.log('Setting flood layer visibility to:', isActive ? 'visible' : 'none');
+                                                    map.setLayoutProperty('stormwater-flood', 'visibility', isActive ? 'visible' : 'none');
+                                                }
+                                            }
+                                        }
+                                        
+                                        // Control map layer visibility for Wholesale Markets (Hunts Point)
+                                        if (tabName === 'hunts') {
+                                            console.log('Hunts Point tab clicked, map exists:', typeof map !== 'undefined');
+                                            if (typeof map !== 'undefined') {
+                                                const hasLayer = map.getLayer('wholesale-markets');
+                                                console.log('Wholesale markets layer exists:', !!hasLayer);
+                                                if (hasLayer) {
+                                                    const isActive = this.classList.contains('active');
+                                                    console.log('Setting wholesale markets layer visibility to:', isActive ? 'visible' : 'none');
+                                                    map.setLayoutProperty('wholesale-markets', 'visibility', isActive ? 'visible' : 'none');
+                                                }
+                                            }
+                                        }
+                                    });
+                                });
+                                
+                                // Handle opacity sliders
+                                document.querySelectorAll('.opacity-slider').forEach(slider => {
+                                    slider.addEventListener('input', function() {
+                                        const opacity = this.value / 100;
+                                        const layerName = this.getAttribute('data-layer');
+                                        
+                                        // Control map layer opacity
+                                        if (typeof map !== 'undefined') {
+                                            if (layerName === 'flood' && map.getLayer('stormwater-flood')) {
+                                                console.log('Setting flood opacity to:', opacity);
+                                                map.setPaintProperty('stormwater-flood', 'fill-opacity', opacity * 0.6);
+                                            }
+                                            if (layerName === 'hunts' && map.getLayer('wholesale-markets')) {
+                                                console.log('Setting wholesale markets opacity to:', opacity);
+                                                map.setPaintProperty('wholesale-markets', 'circle-opacity', opacity * 0.8);
+                                            }
+                                        }
+                                    });
+                                });
                             });
                             </script>
                     </div>
