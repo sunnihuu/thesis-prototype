@@ -90,10 +90,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Log to verify layer is added
         console.log('Stormwater flood layer added with WGS84 coordinates');
 
-        // Add Wholesale Markets GeoJSON
+        // Add market-level summary (clean, deduplicated by BIC)
+        // This is the Level 2 abstraction: market nodes with accurate entity counts
         map.addSource('wholesale-markets', {
             type: 'geojson',
-            data: 'data/nyc-wholesale-markets-clean.geojson'
+            data: 'data/market-nodes-summary.geojson'
         });
         
         map.addLayer({
@@ -108,12 +109,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     'interpolate',
                     ['linear'],
                     ['zoom'],
-                    10, 5,
-                    15, 12
+                    9, 6,
+                    13, 10,
+                    15, 14
                 ],
                 'circle-color': [
                     'match',
-                    ['get', 'MARKET'],
+                    ['get', 'market_name'],
                     'Hunts Point New Fulton Fish Market', '#3498db',
                     'Hunts Point Meat Market', '#e74c3c',
                     'Hunts Point Produce Market', '#27ae60',
@@ -152,10 +154,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 .setLngLat(coordinates)
                 .setHTML(`
                     <div style="font-family: 'Switzer', sans-serif;">
-                        <strong style="font-size: 1.1em; color: #1a1a1a;">${marketName || 'Unknown Location'}</strong>
+                        <strong style="font-size: 1.1em; color: #1a1a1a;">${marketName || 'Downstream distribution'}</strong>
                         <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
-                            <div style="font-size: 0.85em; color: #6b7280; margin-bottom: 4px;">Supplied through:</div>
-                            <div style="font-size: 0.95em; color: #2563eb; font-weight: 500;">${marketType || 'Market System'}</div>
+                            <div style="font-size: 0.85em; color: #6b7280; margin-bottom: 4px;">${marketName ? 'Supplied through:' : 'Status:'}</div>
+                            <div style="font-size: 0.95em; color: #2563eb; font-weight: 500;">${marketType && marketName ? marketType : 'Not spatially specified'}</div>
                         </div>
                     </div>
                 `)
@@ -169,98 +171,111 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Click handler for market nodes - shows market summary panel
         map.on('click', 'wholesale-markets', (e) => {
-            const clickedMarket = e.features[0].properties.MARKET;
+            const marketNode = e.features[0].properties;
+            const marketName = marketNode.market_name;
+            const marketType = marketNode.market_type;
+            const uniqueCompanies = marketNode.unique_companies;
             
-            // Get all features from the wholesale-markets source
-            const allFeatures = map.querySourceFeatures('wholesale-markets');
+            console.log(`Clicked market: ${marketName} (${uniqueCompanies} entities)`);
             
-            // Count companies by market type
-            const marketCounts = {};
-            allFeatures.forEach(feature => {
-                const market = feature.properties.MARKET;
-                marketCounts[market] = (marketCounts[market] || 0) + 1;
-            });
-            
-            const companyCount = marketCounts[clickedMarket] || 0;
-            
-            // Determine market type category
-            let typeCategory = 'Mixed';
-            if (clickedMarket.includes('Produce')) typeCategory = 'Produce';
-            else if (clickedMarket.includes('Meat')) typeCategory = 'Meat';
-            else if (clickedMarket.includes('Fish') || clickedMarket.includes('Seafood')) typeCategory = 'Seafood';
-            
-            // Create summary explanation
-            const explanations = {
-                'Produce': 'This concentration of produce distributors makes the area a critical node in NYC\'s fresh food distribution system.',
-                'Meat': 'This concentration of meat wholesalers represents a critical choke point in the city\'s protein supply chain.',
-                'Seafood': 'This concentration of seafood importers represents a critical node for NYC\'s seafood supply.',
-                'Mixed': 'This market concentration represents a critical infrastructure node in NYC\'s food distribution system.'
+            // Identity statement + functional description
+            const nodeIdentity = {
+                'Hunts Point Produce Market': { function: 'Produce wholesale hub', description: 'serves NYC with fresh vegetables, fruits, specialty produce' },
+                'Hunts Point Meat Market': { function: 'Meat wholesale hub', description: 'central processing and distribution for protein supply' },
+                'Hunts Point New Fulton Fish Market': { function: 'Seafood wholesale hub', description: 'import, processing, and distribution of seafood' },
+                'Gansevoort Meat Market': { function: 'Premium meat hub', description: 'specialized meat wholesale (Manhattan)' },
+                'Brooklyn Wholesale Meat Market': { function: 'Meat wholesale hub', description: 'serves Brooklyn and surrounding boroughs' },
+                'Adjacent to Hunts Point Market': { function: 'Logistics & support hub', description: 'warehousing, cold storage, distribution services' },
+                'Public Wholesale Market': { function: 'Public market', description: 'public wholesale facility' }
             };
             
-            const explanation = explanations[typeCategory] || explanations['Mixed'];
+            const nodeDef = nodeIdentity[marketName] || { function: 'Wholesale hub', description: 'food distribution facility' };
             
-            // Get sample companies
-            const sampleCompanies = allFeatures
-                .filter(f => f.properties.MARKET === clickedMarket)
-                .slice(0, 5)
-                .map(f => ({
-                    name: f.properties.NAME,
-                    market: f.properties.MARKET
-                }));
+            // System-level judgment (thesis voice)
+            const systemJudgment = {
+                'Produce': 'This concentration of produce distributors means NYC\'s vegetable and fruit supply flows through a single point.',
+                'Meat': 'This concentration of meat wholesalers represents a critical choke point—if disrupted, protein supply to the entire city is at risk.',
+                'Seafood': 'This concentration of seafood importers makes NYC\'s access to seafood dependent on a single location.',
+                'Mixed': 'This concentration of logistics services represents critical infrastructure—a single failure cascades across the entire food system.'
+            };
             
-            // Show market detail panel
-            const marketPanel = document.getElementById('market-detail-panel');
-            const contentDiv = document.getElementById('market-detail-content');
+            const judgment = systemJudgment[marketType] || systemJudgment['Mixed'];
             
-            let companiesHTML = `
-                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #d1d5db;">
-                    <a href="#" onclick="toggleCompanies(event)" style="color: #2563eb; text-decoration: none; font-size: 0.9em; font-weight: 500;">+ View example companies</a>
-                    <div id="sample-companies" style="display: none; margin-top: 8px; padding: 8px; background: #fff; border-left: 3px solid #dbeafe;">
-                        <div style="font-size: 0.8em; color: #1e40af; font-weight: 500; margin-bottom: 6px;">Sample Licensed Entities:</div>
-            `;
-            
-            sampleCompanies.forEach((company, idx) => {
-                companiesHTML += `<div style="font-size: 0.85em; color: #4b5563; margin: 4px 0;">• ${company.name}</div>`;
-            });
-            
-            companiesHTML += `
-                        <div style="font-size: 0.75em; color: #9ca3af; margin-top: 8px; font-style: italic; line-height: 1.4;">
-                            Note: This dataset records licensed wholesale entities but does not capture downstream delivery routes or customer locations.
+            // Load entity-level data to get sample companies
+            fetch('data/wholesale-entities.geojson')
+                .then(r => r.json())
+                .then(entityData => {
+                    // Get sample companies for this market
+                    const sampleCompanies = entityData.features
+                        .filter(f => f.properties.market === marketName)
+                        .slice(0, 5)
+                        .map(f => ({
+                            name: f.properties.name,
+                            bic: f.properties.bic_number
+                        }));
+                    
+                    // Build optional drill-in section
+                    let drillInHTML = '';
+                    if (sampleCompanies.length > 0) {
+                        drillInHTML = `
+                            <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid #e5e7eb;">
+                                <a href="#" onclick="toggleCompanies(event)" style="color: #2563eb; text-decoration: none; font-size: 0.9em; font-weight: 500; display: inline-block;">+ View example entities</a>
+                                <div id="sample-companies" style="display: none; margin-top: 10px; padding: 10px; background: #f3f4f6; border-left: 3px solid #dbeafe; border-radius: 4px;">
+                                    <div style="font-size: 0.8em; color: #1e40af; font-weight: 600; margin-bottom: 8px;">Sample licensed entities at this market:</div>
+                                    ${sampleCompanies.map(co => `<div style="font-size: 0.85em; color: #4b5563; margin: 6px 0;">• ${co.name}</div>`).join('')}
+                                    <div style="font-size: 0.75em; color: #9ca3af; margin-top: 10px; padding-top: 8px; border-top: 1px solid #e5e7eb; line-height: 1.4;">
+                                        <strong>📌 About this data:</strong> Company-level locations are illustrative and do not represent actual delivery routes or supply destinations.
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    // Show market detail panel with 4-part structure
+                    const marketPanel = document.getElementById('market-detail-panel');
+                    const contentDiv = document.getElementById('market-detail-content');
+                    
+                    contentDiv.innerHTML = `
+                        <!-- PART 1: IDENTITY STATEMENT -->
+                        <div style="margin-bottom: 14px;">
+                            <div style="font-size: 1.2em; font-weight: 600; color: #1a1a1a; margin-bottom: 4px;">${marketName}</div>
+                            <div style="font-size: 0.95em; color: #6b7280;">
+                                <strong>${nodeDef.function}</strong> — ${nodeDef.description}
+                            </div>
                         </div>
-                    </div>
-                </div>
-            `;
-            
-            contentDiv.innerHTML = `
-                <div style="margin-bottom: 12px;">
-                    <div style="font-size: 0.85em; color: #6b7280; margin-bottom: 4px;">Market Node</div>
-                    <div style="font-size: 1.15em; font-weight: 600; color: #1a1a1a;">${clickedMarket}</div>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                    <div style="padding: 8px; background: #fff; border-radius: 4px; border: 1px solid #e5e7eb;">
-                        <div style="font-size: 0.75em; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Licensed Companies</div>
-                        <div style="font-size: 1.3em; font-weight: 700; color: #2563eb;">${companyCount}+</div>
-                    </div>
-                    <div style="padding: 8px; background: #fff; border-radius: 4px; border: 1px solid #e5e7eb;">
-                        <div style="font-size: 0.75em; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Type</div>
-                        <div style="font-size: 1.1em; font-weight: 600; color: #374151;">${typeCategory}</div>
-                    </div>
-                </div>
-                
-                <div style="padding: 10px; background: #fffbeb; border-left: 3px solid #fbbf24; border-radius: 4px; margin-bottom: 12px;">
-                    <div style="font-size: 0.9em; color: #78350f; line-height: 1.5;">${explanation}</div>
-                </div>
-                
-                ${companiesHTML}
-            `;
-            
-            marketPanel.style.display = 'block';
-            
-            // Close button
-            document.getElementById('market-detail-close').onclick = () => {
-                marketPanel.style.display = 'none';
-            };
+                        
+                        <!-- PART 2: CONCENTRATION EVIDENCE -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+                            <div style="padding: 12px; background: #f9fafb; border-left: 3px solid #2563eb; border-radius: 4px;">
+                                <div style="font-size: 0.75em; color: #6b7280; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 6px;">Unique Companies</div>
+                                <div style="font-size: 1.8em; font-weight: 700; color: #2563eb;">${uniqueCompanies}</div>
+                                <div style="font-size: 0.8em; color: #9ca3af; margin-top: 4px;">licensed entities</div>
+                            </div>
+                            <div style="padding: 12px; background: #f9fafb; border-left: 3px solid #f59e0b; border-radius: 4px;">
+                                <div style="font-size: 0.75em; color: #6b7280; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 6px;">Market Type</div>
+                                <div style="font-size: 1.3em; font-weight: 700; color: #f59e0b;">${marketType}</div>
+                            </div>
+                        </div>
+                        
+                        <!-- PART 3: SYSTEM-LEVEL JUDGMENT -->
+                        <div style="padding: 12px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 4px; margin-bottom: 14px;">
+                            <div style="font-size: 0.9em; color: #78350f; line-height: 1.6;">${judgment}</div>
+                        </div>
+                        
+                        <!-- PART 4: OPTIONAL DRILL-IN -->
+                        ${drillInHTML}
+                    `;
+                    
+                    marketPanel.style.display = 'block';
+                    document.getElementById('market-detail-backdrop').style.display = 'block';
+                    
+                    // Close button
+                    document.getElementById('market-detail-close').onclick = () => {
+                        marketPanel.style.display = 'none';
+                        document.getElementById('market-detail-backdrop').style.display = 'none';
+                    };
+                })
+                .catch(err => console.error('Error loading entity data:', err));
         });
         
         // Global function for toggling companies display
@@ -296,15 +311,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 'fill-color': [
                     'step',
                     ['get', 'logistics_fragility'],
-                    'rgba(255, 255, 255, 0)', // very low fragility: transparent
-                    0.2, '#fef3c7', // low fragility: light yellow
-                    0.4, '#fcd34d', // yellow
-                    0.5, '#fb923c', // orange
-                    0.6, '#f87171', // light red
-                    0.7, '#ef4444', // red
-                    0.8, '#dc2626'  // high fragility: deep red
+                    'rgba(255, 255, 255, 0)',  // Very Low: 0-0.3 → transparent (structural independence)
+                    0.3, '#fef3c7',              // Moderate: 0.3-0.55 → light yellow (emerging dependence)
+                    0.55, '#fb923c',             // High: 0.55-0.75 → orange (significant vulnerability)
+                    0.75, '#dc2626'              // Critical: 0.75-1.0 → deep red (system-critical zones)
                 ],
-                'fill-opacity': 0.7
+                'fill-opacity': 0.8
             }
         }, 'nyc-truck-routes'); // Add below truck routes
         
