@@ -114,21 +114,19 @@
                         <div class="panel-map-legend" id="storage-legends" style="display:none;">
                             <span class="system-view-label" style="font-family: 'Switzer', sans-serif;">Legend</span>
                             
-                            <!-- Cold Storage/Warehouse -->
+                            <!-- Storage Capacity -->
                             <div style="margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e5e7eb;">
-                                <div class="panel-legend-title" style="margin-bottom: 6px;">Cold Storage/Warehouse</div>
-                                <div class="legend-caption" style="margin-bottom: 8px;">Storage capacity determines resilience during supply disruptions.</div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#339af0;"></span><span class="panel-legend-label">Cold Storage Facilities</span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#845ef7;"></span><span class="panel-legend-label">Warehouses</span></div>
+                                <div class="panel-legend-title" style="margin-bottom: 6px;">Storage Capacity Buffer</div>
+                                <div class="legend-caption" style="margin-bottom: 8px;">Areas with cold storage and warehouse facilities provide buffer capacity during supply disruptions.</div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ffe066;"></span><span class="panel-legend-label">Low Storage Capacity</span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ffa94d;"></span><span class="panel-legend-label">Medium Storage Capacity</span></div>
+                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ff6b6b;"></span><span class="panel-legend-label">High Storage Capacity</span></div>
                             </div>
                             
-                            <!-- Population Density -->
+                            <!-- Context -->
                             <div>
-                                <div class="panel-legend-title" style="margin-bottom: 6px;">Population Density</div>
-                                <div class="legend-caption" style="margin-bottom: 8px;">Higher density areas require more responsive distribution networks.</div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ffe066;"></span><span class="panel-legend-label">Low Density</span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ffa94d;"></span><span class="panel-legend-label">Medium Density</span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ff6b6b;"></span><span class="panel-legend-label">High Density</span></div>
+                                <div class="panel-legend-title" style="margin-bottom: 6px;">Why Storage Matters</div>
+                                <div class="legend-caption" style="margin-bottom: 0;">Storage capacity determines how long neighborhoods can maintain food access when supply chains are disrupted. Areas without nearby cold storage facilities face immediate shortages.</div>
                             </div>
                         </div>
                         
@@ -192,8 +190,9 @@
                     </div>
             
                 </div>
-            </div>
+            </aside>
             <div id="map"></div>
+            </div>
             
             <!-- MARKET DETAIL POP-UP (floating over map with interactive backdrop) -->
             <div id="market-detail-backdrop" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); z-index: 999; pointer-events: none;"></div>

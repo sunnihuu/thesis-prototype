@@ -54,7 +54,6 @@
 	box-shadow: none;
 	background: #f8f9fa;
 	z-index: 1;
-	margin-left: 50px;
 }
 .panel-legend-color {
 	display: inline-block;
@@ -428,9 +427,20 @@ body, html {
 	-moz-osx-font-smoothing: grayscale;
 }
 
+body {
+	display: flex;
+	flex-direction: row;
+}
+
+html {
+	height: 100%;
+}
+
 .urban-system-container {
 	display: flex;
 	height: 100vh;
+	width: 100%;
+	flex: 1;
 }
 
 .sidebar {
@@ -518,17 +528,6 @@ body, html {
 	flex: 1;
 	position: relative;
 	min-width: 0;
-}
-#map {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	border: none;
-	box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-	background: #f5f6fa;
-	z-index: 1;
 }
 .tooltip {
 	position: absolute;

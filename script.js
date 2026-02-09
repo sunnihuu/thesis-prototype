@@ -428,6 +428,83 @@ document.addEventListener('DOMContentLoaded', function() {
         
         console.log('Census tracts layer added with hover and click interactions');
 
+        // Add storage tracts with storage potential bins
+        map.addSource('storage-tracts', {
+            type: 'geojson',
+            data: 'data/storage_tracts.geojson'
+        });
+
+        map.addLayer({
+            id: 'storage-tracts-fill',
+            type: 'fill',
+            source: 'storage-tracts',
+            layout: {
+                'visibility': 'none'
+            },
+            paint: {
+                'fill-color': [
+                    'match',
+                    ['get', 'storage_bin'],
+                    0, '#ffe066',
+                    1, '#ffa94d',
+                    2, '#ff6b6b',
+                    '#ffe066'
+                ],
+                'fill-opacity': 0.55
+            }
+        }, 'nyc-truck-routes');
+
+        map.addLayer({
+            id: 'storage-tracts-outline',
+            type: 'line',
+            source: 'storage-tracts',
+            layout: {
+                'visibility': 'none'
+            },
+            paint: {
+                'line-color': '#bdbdbd',
+                'line-width': 0.6,
+                'line-opacity': 0.7
+            }
+        });
+
+        console.log('Storage tracts layer added');
+
+        const storageLayerIds = ['storage-tracts-fill', 'storage-tracts-outline'];
+        const logisticsLayerIds = [
+            'census-tracts-fill',
+            'census-tracts-outline',
+            'census-tracts-hover',
+            'census-tracts-selected'
+        ];
+        const logisticsContextLayerIds = [
+            'stormwater-flood',
+            'nyc-truck-routes',
+            'wholesale-markets'
+        ];
+
+        function setLayerVisibility(layerIds, visibility) {
+            layerIds.forEach((layerId) => {
+                if (map.getLayer(layerId)) {
+                    map.setLayoutProperty(layerId, 'visibility', visibility);
+                }
+            });
+        }
+
+        function setStorageView(isStorage) {
+            setLayerVisibility(storageLayerIds, isStorage ? 'visible' : 'none');
+            setLayerVisibility(logisticsLayerIds, isStorage ? 'none' : 'visible');
+            setLayerVisibility(logisticsContextLayerIds, isStorage ? 'none' : 'visible');
+        }
+
+        const btnLogistics = document.getElementById('toggle-combined');
+        const btnStorage = document.getElementById('toggle-carbon');
+
+        if (btnLogistics && btnStorage) {
+            btnLogistics.addEventListener('click', () => setStorageView(false));
+            btnStorage.addEventListener('click', () => setStorageView(true));
+        }
+
         // Add NYC Fresh Zoning GeoJSON as a fill layer
         map.addSource('nyc-fresh-zoining', {
             type: 'geojson',
