@@ -4,15 +4,187 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic3VubmlodSIsImEiOiJjbWQ2bDBwNzcwMThwMm9weTVjc
 
 let map; // Global map variable for layer control
 document.addEventListener('DOMContentLoaded', function() {
+    // --- Storytelling Overlay Logic ---
+    // Fade in Section 2 after 2.5s
+    setTimeout(() => {
+        const s2 = document.getElementById('section2');
+        if (s2) s2.style.opacity = 1;
+    }, 2500);
+
+    // Section 3: info panel logic (to be triggered on hover)
+    const infoPanel = document.getElementById('section3');
+    const infoContent = document.getElementById('info-panel-content');
+
+    // Example: show info panel on hover for a layer (replace 'nta-heat' with your actual layer id)
+    if (window.map) {
+        map.on('mousemove', 'nta-heat', (e) => {
+            if (infoPanel && infoContent && e.features.length > 0) {
+                const props = e.features[0].properties;
+                infoContent.innerHTML = `
+                  <div style="font-size:1.2em;font-weight:700;margin-bottom:8px;">${props.nta_name || props.ntaname || 'Neighborhood'}</div>
+                  <div style="margin-bottom:6px;">Supply Gap: <span style="color:#b91c1c;font-weight:600;">${props.supply_gap_lbs ? Number(props.supply_gap_lbs).toLocaleString() : 'N/A'} lbs</span></div>
+                  <div>Food Insecure: <span style="color:#b91c1c;font-weight:600;">${props.food_insecure_percentage || 'N/A'}%</span></div>
+                `;
+                infoPanel.style.display = '';
+            }
+        });
+        map.on('mouseleave', 'nta-heat', () => {
+            if (infoPanel) infoPanel.style.display = 'none';
+        });
+    }
     // Initialize map
     map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/light-v10',
         center: [-73.935242, 40.730610],
-        zoom: 10.5
+        zoom: 10.5,
+        attributionControl: false
+    });
+
+    // After style loads, mute the base map: desaturate, lower opacity, hide POI/labels, keep water and street outlines
+    map.on('style.load', function() {
+        // Lower saturation and opacity for all background/fill layers
+        map.getStyle().layers.forEach(function(layer) {
+            // Desaturate and fade land, building, background
+            if (layer.type === 'fill' || layer.type === 'background') {
+                if (layer.paint && layer.paint['background-color']) {
+                    map.setPaintProperty(layer.id, 'background-color', '#f7f7f7');
+                }
+                if (layer.paint && layer.paint['fill-color']) {
+                    map.setPaintProperty(layer.id, 'fill-color', '#f7f7f7');
+                }
+                if (layer.paint && layer.paint['fill-opacity'] !== undefined) {
+                    map.setPaintProperty(layer.id, 'fill-opacity', 0.8);
+                }
+                if (layer.paint && layer.paint['background-opacity'] !== undefined) {
+                    map.setPaintProperty(layer.id, 'background-opacity', 0.8);
+                }
+            }
+            // Hide all labels except water and street outlines
+            if (layer.type === 'symbol') {
+                // Hide all labels except water and road labels
+                if (!layer.id.includes('water') && !layer.id.includes('road')) {
+                    map.setLayoutProperty(layer.id, 'visibility', 'none');
+                } else {
+                    // Fade water/road labels
+                    map.setPaintProperty(layer.id, 'text-color', '#bdbdbd');
+                    map.setPaintProperty(layer.id, 'text-halo-color', '#f7f7f7');
+                    map.setPaintProperty(layer.id, 'text-opacity', 0.2);
+                }
+            }
+            // Hide POI layers
+            if (layer.id.includes('poi')) {
+                map.setLayoutProperty(layer.id, 'visibility', 'none');
+            }
+        });
+    });
+
+    // --- Layer Control Logic ---
+    const layerCheckboxes = document.querySelectorAll('.layer-toggle');
+    // Map of layer IDs to their default visibility (for reset)
+    const defaultVisibility = {
+        'nyc-truck-routes': 'visible',
+        'stormwater-flood': 'visible',
+        'wholesale-markets': 'visible',
+        'census-tracts-fill': 'visible',
+        'storage-tracts-fill': 'none',
+        'nyc-fresh-zoining': 'none'
+    };
+
+    // Helper: toggle a single layer's visibility
+    function toggleLayer(layerId, show) {
+        if (map.getLayer(layerId)) {
+            map.setLayoutProperty(layerId, 'visibility', show ? 'visible' : 'none');
+        }
+        // For paired outline layers (e.g., storage/census tracts), toggle outline if fill is toggled
+        if (layerId === 'storage-tracts-fill' && map.getLayer('storage-tracts-outline')) {
+            map.setLayoutProperty('storage-tracts-outline', 'visibility', show ? 'visible' : 'none');
+        }
+        if (layerId === 'census-tracts-fill' && map.getLayer('census-tracts-outline')) {
+            map.setLayoutProperty('census-tracts-outline', 'visibility', show ? 'visible' : 'none');
+            if (map.getLayer('census-tracts-hover')) map.setLayoutProperty('census-tracts-hover', 'visibility', show ? 'visible' : 'none');
+            if (map.getLayer('census-tracts-selected')) map.setLayoutProperty('census-tracts-selected', 'visibility', show ? 'visible' : 'none');
+        }
+    }
+
+    // Set initial visibility based on checkboxes
+    layerCheckboxes.forEach(cb => {
+        const layerId = cb.getAttribute('data-layer');
+        toggleLayer(layerId, cb.checked);
+    });
+
+    // Listen for checkbox changes
+    layerCheckboxes.forEach(cb => {
+        cb.addEventListener('change', function() {
+            const layerId = this.getAttribute('data-layer');
+            toggleLayer(layerId, this.checked);
+        });
     });
 
     map.on('load', function() {
+                        // --- Emergency Food Supply Gap Layer (STRUCTURE ONLY) ---
+                        map.addSource('nta-supply-gap', {
+                            type: 'geojson',
+                            data: 'data/nta_supply_gap_2025.geojson'
+                        });
+
+                        // Add NTA boundaries and fill by supply_gap_lbs (no animation)
+                        map.addLayer({
+                            id: 'nta-supply-gap-fill',
+                            type: 'fill',
+                            source: 'nta-supply-gap',
+                            layout: {
+                                'visibility': 'visible'
+                            },
+                            paint: {
+                                'fill-color': [
+                                    'interpolate',
+                                    ['linear'],
+                                    ['get', 'supply_gap_lbs'],
+                                    -100000, '#2563eb', // Large surplus (blue)
+                                    0, '#e0e7ef',      // Neutral (light gray)
+                                    10000, '#fee2e2',  // Small gap (light red)
+                                    50000, '#fca5a5',  // Moderate gap
+                                    150000, '#ef4444', // High gap
+                                    300000, '#b91c1c'  // Extreme gap
+                                ],
+                                'fill-opacity': 0.85,
+                                'fill-outline-color': '#222'
+                            }
+                        });
+
+                        // Add NTA boundary outline
+                        map.addLayer({
+                            id: 'nta-supply-gap-outline',
+                            type: 'line',
+                            source: 'nta-supply-gap',
+                            paint: {
+                                'line-color': '#222',
+                                'line-width': 1.1,
+                                'line-opacity': 0.7
+                            }
+                        });
+
+                        // Simple hover panel for NTA
+                        map.on('mousemove', 'nta-supply-gap-fill', (e) => {
+                            const infoPanel = document.getElementById('section3');
+                            const infoContent = document.getElementById('info-panel-content');
+                            if (infoPanel && infoContent && e.features.length > 0) {
+                                const props = e.features[0].properties;
+                                infoContent.innerHTML = `
+                                  <div style="font-size:1.1em;font-weight:700;margin-bottom:6px;">${props.nta_name || props.ntaname || 'Neighborhood'}</div>
+                                  <div>Supply Gap: <span style="color:#b91c1c;font-weight:600;">${props.supply_gap_lbs ? Number(props.supply_gap_lbs).toLocaleString() : 'N/A'} lbs</span></div>
+                                  <div>Food Insecure: <span style="color:#b91c1c;font-weight:600;">${props.food_insecure_pct || 'N/A'}%</span></div>
+                                `;
+                                infoPanel.style.display = '';
+                            }
+                        });
+                        map.on('mouseleave', 'nta-supply-gap-fill', () => {
+                            const infoPanel = document.getElementById('section3');
+                            if (infoPanel) infoPanel.style.display = 'none';
+                        });
+                        // Remove all other layers and sources for a structural-only map
+                        // ...existing code...
                 // Add NYC Truck Routes GeoJSON as a line layer
                 map.addSource('nyc-truck-routes', {
                     type: 'geojson',

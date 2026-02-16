@@ -11,199 +11,62 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-        <div class="urban-system-container">
-            <aside class="sidebar">
-                <div id="sidebar-content">
-                    <div id="overview-panel">
-                        <h1 class="system-question-title" style="font-family: 'Switzer', sans-serif; font-size: 1.8em; margin-top: -20px;">What Does It Take to Feed a City?</h1>
-                        <div class="system-question-sub" style="font-family: 'Switzer', sans-serif;">A Systems Lens on Urban Food Logistics, Carbon, and Inequality</div>
-                        <div class="lens-selector-container">
-                            <span class="system-view-label" style="font-family: 'Switzer', sans-serif; font-size: 1em; font-weight: 700; font-style: italic;">City Food System Lenses</span>
-                            <div class="system-tension-abstract">
-                                <span class="system-tension-label-left" style="font-family: 'Switzer', sans-serif;">Footprint Logic</span>
-                                <div class="lens-slider-track">
-                                    <input type="range" min="0" max="2" value="1" step="1" class="lens-slider" id="lens-slider">
-                                    <div class="lens-slider-ticks">
-                                        <span class="lens-tick"></span>
-                                        <span class="lens-tick"></span>
-                                        <span class="lens-tick"></span>
+                                <div id="map" style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;"></div>
+                                <div id="static-legend" style="position:absolute;bottom:30px;left:30px;background:#fff;border-radius:8px;box-shadow:0 2px 8px #0001;padding:16px 20px;z-index:10;font-family:Switzer,sans-serif;min-width:220px;">
+                                    <div style="font-weight:700;font-size:1.08em;margin-bottom:10px;">Supply Gap (lbs)</div>
+                                    <div style="display:flex;align-items:center;margin-bottom:6px;">
+                                        <span style="width:22px;height:18px;display:inline-block;background:#2563eb;border:1px solid #222;margin-right:10px;"></span>
+                                        <span style="font-size:0.98em;">Surplus &lt; -100,000</span>
+                                    </div>
+                                    <div style="display:flex;align-items:center;margin-bottom:6px;">
+                                        <span style="width:22px;height:18px;display:inline-block;background:#e0e7ef;border:1px solid #222;margin-right:10px;"></span>
+                                        <span style="font-size:0.98em;">Neutral (0)</span>
+                                    </div>
+                                    <div style="display:flex;align-items:center;margin-bottom:6px;">
+                                        <span style="width:22px;height:18px;display:inline-block;background:#fee2e2;border:1px solid #222;margin-right:10px;"></span>
+                                        <span style="font-size:0.98em;">Gap &gt; 10,000</span>
+                                    </div>
+                                    <div style="display:flex;align-items:center;margin-bottom:6px;">
+                                        <span style="width:22px;height:18px;display:inline-block;background:#fca5a5;border:1px solid #222;margin-right:10px;"></span>
+                                        <span style="font-size:0.98em;">Gap &gt; 50,000</span>
+                                    </div>
+                                    <div style="display:flex;align-items:center;margin-bottom:6px;">
+                                        <span style="width:22px;height:18px;display:inline-block;background:#ef4444;border:1px solid #222;margin-right:10px;"></span>
+                                        <span style="font-size:0.98em;">Gap &gt; 150,000</span>
+                                    </div>
+                                    <div style="display:flex;align-items:center;">
+                                        <span style="width:22px;height:18px;display:inline-block;background:#b91c1c;border:1px solid #222;margin-right:10px;"></span>
+                                        <span style="font-size:0.98em;">Gap &gt; 300,000</span>
                                     </div>
                                 </div>
-                                <span class="system-tension-label-right" style="font-family: 'Switzer', sans-serif;">Inequality</span>
-                            </div>
-                        </div>
-                        <div class="system-view-mode">
-                            <span class="system-view-label" style="font-family: 'Switzer', sans-serif; font-size: 1em; font-weight: 700; font-style: italic;">Food Supply Fragility</span>
-                            <div class="system-view-selector refined-view">
-                                <button class="system-view-btn refined-btn active" id="toggle-combined" style="font-family: 'Switzer', sans-serif;">Logistics</button>
-                                <button class="system-view-btn refined-btn" id="toggle-carbon" style="font-family: 'Switzer', sans-serif;">Storage Buffer</button>
-                                <button class="system-view-btn refined-btn" id="toggle-inequality" style="font-family: 'Switzer', sans-serif;">Inequality</button>
-                            </div>
-                        </div>
-                        
-                        <div class="system-view-mode">
-                            <span class="system-view-label" style="font-family: 'Switzer', sans-serif; font-size: 1em; font-weight: 700; font-style: italic;">Footprint Logic</span>
-                            <div class="system-view-selector refined-view">
-                                <button class="system-view-btn refined-btn" id="toggle-lastmile" style="font-family: 'Switzer', sans-serif;">Delivery</button>
-                                <button class="system-view-btn refined-btn" id="toggle-chain" style="font-family: 'Switzer', sans-serif;">Cold Chain</button>
-                                <button class="system-view-btn refined-btn" id="toggle-hubs" style="font-family: 'Switzer', sans-serif;">Centralization</button>
-                            </div>
-                        </div>
-                        
-                        <!-- LOGISTICS LEGEND -->
-                        <div class="panel-map-legend legend-tabs" id="logistics-legends">
-                            <span class="system-view-label" style="font-family: 'Switzer', sans-serif; font-size: 1em; font-weight: 700; font-style: italic;">Legend</span>
-                            
-                            <!-- Logistics Fragility Overview -->
-                            <div class="panel-legend-title" style="margin-bottom: 6px;">Logistics Vulnerability</div>
-                            <div class="legend-caption" style="margin-bottom: 8px;">Vulnerability to supply disruptions: truck corridor exposure, flood risk, and hub concentration.</div>
-                            <div style="display: flex; align-items: stretch; gap: 0; margin-bottom: 8px; height: 24px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, #fef3c7 15%, #fb923c 50%, #dc2626 100%); border-radius: 6px; border: 1px solid #e5e7eb; box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);"></div>
-                            <div style="display: flex; justify-content: space-between; font-size: 0.75em; color: #6b7280; gap: 4px; font-family: 'Switzer', sans-serif; font-weight: 500;">
-                                <span>Very Low</span>
-                                <span>Moderate</span>
-                                <span>High</span>
-                                <span>Critical</span>
-                            </div>
-                            <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e5e7eb;"></div>
-                            
-                            <!-- Truck Routes -->
-                            <div style="margin-bottom: 16px;">
-                                <div class="panel-legend-title" style="margin-bottom: 6px;">Truck Routes</div>
-                                <div class="legend-caption" style="margin-bottom: 8px;">Thicker routes indicate higher dependency on these corridors for food distribution.</div>
-                                <div class="panel-legend-row">
-                                    <span class="panel-legend-color" style="background:#1976d2;"></span>
-                                    <span class="panel-legend-line panel-legend-dashed" style="border-top:2.5px dashed #1976d2;"></span>
-                                    <span class="panel-legend-label">Local</span>
-                                </div>
-                                <div class="panel-legend-row">
-                                    <span class="panel-legend-color" style="background:#e67e22;"></span>
-                                    <span class="panel-legend-line panel-legend-dashed" style="border-top:2.5px dashed #e67e22;"></span>
-                                    <span class="panel-legend-label">Through</span>
-                                </div>
-                                <div class="panel-legend-row">
-                                    <span class="panel-legend-color" style="background:#888;"></span>
-                                    <span class="panel-legend-line panel-legend-solid" style="border-top:2.5px solid #888;"></span>
-                                    <span class="panel-legend-label">Other</span>
-                                </div>
-                            </div>
-                            
-                            <!-- Wholesale Market -->
-                            <div style="margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e5e7eb;">
+                <!-- Storytelling Overlay Sections -->
+                <div id="section1" style="position:absolute;top:8vh;left:0;width:100vw;text-align:center;pointer-events:none;z-index:1200;">
+                    <div style="display:inline-block;background:rgba(255,255,255,0.85);padding:32px 48px 28px 48px;font-family:'Switzer',sans-serif;font-size:2.2em;font-weight:700;color:#222;letter-spacing:-0.01em;border-radius:18px;box-shadow:0 2px 16px rgba(0,0,0,0.04);">Food moves quietly.</div>
+                </div>
+                <div id="section2" style="position:absolute;top:18vh;left:0;width:100vw;text-align:center;pointer-events:none;z-index:1200;opacity:0;transition:opacity 1.2s;">
+                    <div style="display:inline-block;background:rgba(255,255,255,0.85);padding:24px 40px 20px 40px;font-family:'Switzer',sans-serif;font-size:1.6em;font-weight:500;color:#b91c1c;letter-spacing:-0.01em;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,0.03);">But not evenly.</div>
+                </div>
+                <div id="section3" style="position:absolute;top:28vh;right:4vw;min-width:220px;max-width:340px;background:rgba(255,255,255,0.92);padding:28px 36px 28px 28px;font-family:'Switzer',sans-serif;font-size:1.15em;color:#222;box-shadow:0 2px 8px rgba(0,0,0,0.04);border-radius:14px;z-index:1200;display:none;">
+                    <div id="info-panel-content"></div>
+                </div>
+        <!-- Floating Layer Control Panel -->
+        <div id="layer-control" style="position: absolute; top: 20px; left: 20px; z-index: 1100; background: rgba(255,255,255,0.95); border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 12px 16px; font-family: 'Switzer', sans-serif; min-width: 180px;">
+            <div style="font-weight: 700; font-size: 1.08em; margin-bottom: 8px;">Map Layers</div>
+            <label style="display: block; margin-bottom: 6px;"><input type="checkbox" class="layer-toggle" data-layer="nyc-truck-routes" checked> Truck Routes</label>
+            <label style="display: block; margin-bottom: 6px;"><input type="checkbox" class="layer-toggle" data-layer="stormwater-flood" checked> Flood Zones</label>
+            <label style="display: block; margin-bottom: 6px;"><input type="checkbox" class="layer-toggle" data-layer="wholesale-markets" checked> Wholesale Markets</label>
+            <label style="display: block; margin-bottom: 6px;"><input type="checkbox" class="layer-toggle" data-layer="census-tracts-fill" checked> Census Tracts</label>
+            <label style="display: block; margin-bottom: 6px;"><input type="checkbox" class="layer-toggle" data-layer="storage-tracts-fill"> Storage Tracts</label>
+            <label style="display: block; margin-bottom: 0;"><input type="checkbox" class="layer-toggle" data-layer="nyc-fresh-zoining"> Fresh Zoning</label>
+        </div>
+        <!-- MARKET DETAIL POP-UP (floating over map with interactive backdrop) -->
+        <div id="market-detail-backdrop" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); z-index: 999; pointer-events: none;"></div>
+        <div id="market-detail-panel" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 400px; width: 90%; max-height: 80vh; overflow-y: auto; padding: 20px; background: #faf8f3; border-radius: 8px; border: 1px solid #e5e7eb; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 1000; pointer-events: auto; font-family: 'Switzer', sans-serif;">
+            <button id="market-detail-close" style="position: absolute; top: 12px; right: 12px; background: #faf8f3; border: 1px solid #16a34a; border-radius: 999px; font-size: 1.4em; cursor: pointer; color: #16a34a; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">&times;</button>
+            <div id="market-detail-content" style="margin-top: 8px;">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+        <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+        <script src="script.js"></script>
                                 <div class="panel-legend-title" style="margin-bottom: 6px;">Wholesale Market</div>
-                                <div style="font-size: 0.85em; color: #6b7280; margin-bottom: 8px; font-style: italic;">Nodes represent aggregated market hubs, not individual firms.</div>
-                                <div class="legend-caption" style="margin-bottom: 8px;">Historic market locations show where food enters the city's distribution system.</div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#3498db;"></span><span class="panel-legend-label">Fish Market</span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#e74c3c;"></span><span class="panel-legend-label">Meat Market</span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#27ae60;"></span><span class="panel-legend-label">Produce Market</span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#f39c12;"></span><span class="panel-legend-label">Adjacent Markets</span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#9b59b6;"></span><span class="panel-legend-label">Gansevoort Market</span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#c0392b;"></span><span class="panel-legend-label">Brooklyn Market</span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#95a5a6;"></span><span class="panel-legend-label">Other Markets</span></div>
-                            </div>
-                            
-                            <!-- Flood Zones -->
-                            <div>
-                                <div class="panel-legend-title" style="margin-bottom: 6px;">Flood Zones</div>
-                                <div class="legend-caption" style="margin-bottom: 8px;">Flood-prone segments represent potential points of failure in the food supply chain.</div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#6dd5ed;"></span><span class="panel-legend-label">Nuisance Flooding (≥4" & <1')</span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#2193b0;"></span><span class="panel-legend-label">Deep & Contiguous (≥1')</span></div>
-                            </div>
-                        </div>
-                        
-                        <!-- STORAGE LEGEND -->
-                        <div class="panel-map-legend" id="storage-legends" style="display:none;">
-                            <span class="system-view-label" style="font-family: 'Switzer', sans-serif;">Legend</span>
-                            
-                            <!-- Storage Capacity -->
-                            <div style="margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e5e7eb;">
-                                <div class="panel-legend-title" style="margin-bottom: 6px;">Storage Capacity Buffer</div>
-                                <div class="legend-caption" style="margin-bottom: 8px;">Areas with cold storage and warehouse facilities provide buffer capacity during supply disruptions.</div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ffe066;"></span><span class="panel-legend-label">Low Storage Capacity</span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ffa94d;"></span><span class="panel-legend-label">Medium Storage Capacity</span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ff6b6b;"></span><span class="panel-legend-label">High Storage Capacity</span></div>
-                            </div>
-                            
-                            <!-- Context -->
-                            <div>
-                                <div class="panel-legend-title" style="margin-bottom: 6px;">Why Storage Matters</div>
-                                <div class="legend-caption" style="margin-bottom: 0;">Storage capacity determines how long neighborhoods can maintain food access when supply chains are disrupted. Areas without nearby cold storage facilities face immediate shortages.</div>
-                            </div>
-                        </div>
-                        
-                        <!-- INEQUALITY LEGEND -->
-                        <div class="panel-map-legend" id="inequality-legends" style="display:none;">
-                            <span class="system-view-label" style="font-family: 'Switzer', sans-serif;">Legend</span>
-                            
-                            <!-- Income/Property -->
-                            <div style="margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e5e7eb;">
-                                <div class="panel-legend-title" style="margin-bottom: 6px;">Income/Property</div>
-                                <div class="legend-caption" style="margin-bottom: 8px;">Economic disparities shape food access patterns and vulnerability.</div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#51cf66;"></span><span class="panel-legend-label">High Income</span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ffd43b;"></span><span class="panel-legend-label">Medium Income</span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#ff6b6b;"></span><span class="panel-legend-label">Low Income</span></div>
-                            </div>
-                            
-                            <!-- Food Retail Density -->
-                            <div>
-                                <div class="panel-legend-title" style="margin-bottom: 6px;">Food Retail Density</div>
-                                <div class="legend-caption" style="margin-bottom: 8px;">Low retail density areas may face limited access to fresh food options.</div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#37b24d;"></span><span class="panel-legend-label">High Density</span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#fab005;"></span><span class="panel-legend-label">Medium Density</span></div>
-                                <div class="panel-legend-row"><span class="panel-legend-chip" style="background:#f03e3e;"></span><span class="panel-legend-label">Low Density</span></div>
-                            </div>
-                        </div>
-                        
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                // City Food System Lens Slider
-                                const lensSlider = document.getElementById('lens-slider');
-                                
-                                lensSlider.addEventListener('input', function() {
-                                    const value = parseInt(this.value);
-                                    console.log('Lens slider changed to:', value === 0 ? 'Footprint Logic' : value === 1 ? 'Balanced' : 'Inequality');
-                                });
-                                
-                                // Handle main view buttons (Logistics, Storage, Inequality)
-                                const btnLogistics = document.getElementById('toggle-combined');
-                                const btnStorage = document.getElementById('toggle-carbon');
-                                const btnInequality = document.getElementById('toggle-inequality');
-                                
-                                const logisticsLegends = document.getElementById('logistics-legends');
-                                const storageLegends = document.getElementById('storage-legends');
-                                const inequalityLegends = document.getElementById('inequality-legends');
-                                
-                                function switchView(activeBtn, activeLegend) {
-                                    // Update button states
-                                    [btnLogistics, btnStorage, btnInequality].forEach(btn => btn.classList.remove('active'));
-                                    activeBtn.classList.add('active');
-                                    
-                                    // Update legend visibility
-                                    [logisticsLegends, storageLegends, inequalityLegends].forEach(legend => legend.style.display = 'none');
-                                    activeLegend.style.display = '';
-                                }
-                                
-                                btnLogistics.addEventListener('click', () => switchView(btnLogistics, logisticsLegends));
-                                btnStorage.addEventListener('click', () => switchView(btnStorage, storageLegends));
-                                btnInequality.addEventListener('click', () => switchView(btnInequality, inequalityLegends));
-                            });
-                            </script>
-                    </div>
-            
-                </div>
-            </aside>
-            <div id="map"></div>
-            </div>
-            
-            <!-- MARKET DETAIL POP-UP (floating over map with interactive backdrop) -->
-            <div id="market-detail-backdrop" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); z-index: 999; pointer-events: none;"></div>
-            <div id="market-detail-panel" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 400px; width: 90%; max-height: 80vh; overflow-y: auto; padding: 20px; background: #faf8f3; border-radius: 8px; border: 1px solid #e5e7eb; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 1000; pointer-events: auto; font-family: 'Switzer', sans-serif;">
-                <button id="market-detail-close" style="position: absolute; top: 12px; right: 12px; background: #faf8f3; border: 1px solid #16a34a; border-radius: 999px; font-size: 1.4em; cursor: pointer; color: #16a34a; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">&times;</button>
-                <div id="market-detail-content" style="margin-top: 8px;">
-                    <!-- Dynamically populated -->
-                </div>
-            </div>
-            
-            <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-            <script src="script.js"></script>
-</body>
-</html>
