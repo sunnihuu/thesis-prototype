@@ -1,6 +1,6 @@
 // Mapbox GL JS Map Initialization
 
-mapboxgl.accessToken = 'pk.eyJ1Ijoic3VubmlodSIsImEiOiJjbWQ2bDBwNzcwMThwMm9weTVjc2JuNG90In0.sVXA1xGrFWnG-1ZV_EyO1w';
+// mapboxgl.accessToken = process.env.MAPBOX_TOKEN; // 请用安全方式注入 token
 
 let map; // Global map variable for layer control
 document.addEventListener('DOMContentLoaded', function() {
